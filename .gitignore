@@ -1,18 +1,36 @@
-# Angular / Node
-/node_modules
+# Build
 /dist
+/tmp
 /out-tsc
 /.angular/cache
-/coverage
+
+# Node
+/node_modules
 npm-debug.log
 yarn-error.log
 
+# Testes
+/coverage
+__screenshots__/
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
 # IDE
 .idea/
-.vscode/*
-!.vscode/extensions.json
 *.swp
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
 
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Cache do Nx (usado pela CLI do spartan)
+/.nx

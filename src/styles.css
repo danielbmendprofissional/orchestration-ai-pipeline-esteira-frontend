@@ -1,0 +1,102 @@
+/*
+ * Tokens da Esteira: fonte única. O @theme alimenta os utilitários do Tailwind; o :root traduz
+ * os mesmos valores para as variáveis que os componentes spartan (helm) leem — nunca o tema de
+ * fábrica do spartan. Valores ainda são a semente de docs/design/tokens.md: a definição do design
+ * (D0, /impeccable init → DESIGN.md) troca aqui.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+
+@theme {
+  --color-brand-50: #f4f7f5;
+  --color-brand-100: #e3ebe6;
+  --color-brand-200: color-mix(in oklab, var(--color-brand-100), var(--color-brand-300));
+  --color-brand-300: #9bb8a8;
+  --color-brand-400: color-mix(in oklab, var(--color-brand-300), var(--color-brand-500));
+  --color-brand-500: #3d6b52;
+  --color-brand-600: color-mix(in oklab, var(--color-brand-500), var(--color-brand-700));
+  --color-brand-700: #274538;
+  --color-brand-800: color-mix(in oklab, var(--color-brand-700), var(--color-brand-900));
+  --color-brand-900: #132420;
+  --color-brand-950: color-mix(in oklab, var(--color-brand-900), black 30%);
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f7f7f6;
+  --color-neutral-100: color-mix(in oklab, var(--color-neutral-50), var(--color-neutral-200));
+  --color-neutral-200: #e2e1de;
+  --color-neutral-300: color-mix(in oklab, var(--color-neutral-200), var(--color-neutral-500) 33%);
+  --color-neutral-400: color-mix(in oklab, var(--color-neutral-200), var(--color-neutral-500) 66%);
+  --color-neutral-500: #7a7873;
+  --color-neutral-600: color-mix(in oklab, var(--color-neutral-500), var(--color-neutral-800) 33%);
+  --color-neutral-700: color-mix(in oklab, var(--color-neutral-500), var(--color-neutral-800) 66%);
+  --color-neutral-800: #2c2b28;
+  --color-neutral-900: color-mix(in oklab, var(--color-neutral-800), var(--color-neutral-950));
+  --color-neutral-950: #161513;
+
+  --color-success: #2f7a4f;
+  --color-warning: #a3670c;
+  --color-danger: #b3392c;
+  --color-info: #2f6f8f;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Source Sans 3', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', Consolas, monospace;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Contrato de variáveis do spartan → tokens. Só claro por enquanto: escuro (ou não) sai da D0. */
+:root {
+  color-scheme: light;
+
+  --radius: var(--radius-md);
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-neutral-800);
+  --card: var(--color-neutral-0);
+  --card-foreground: var(--color-neutral-800);
+  --popover: var(--color-neutral-0);
+  --popover-foreground: var(--color-neutral-800);
+  --primary: var(--color-brand-500);
+  --primary-foreground: var(--color-neutral-0);
+  --secondary: var(--color-brand-100);
+  --secondary-foreground: var(--color-brand-900);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-600);
+  --accent: var(--color-brand-50);
+  --accent-foreground: var(--color-brand-900);
+  --destructive: var(--color-danger);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-brand-300);
+  --sidebar: var(--color-neutral-0);
+  --sidebar-foreground: var(--color-neutral-800);
+  --sidebar-primary: var(--color-brand-500);
+  --sidebar-primary-foreground: var(--color-neutral-0);
+  --sidebar-accent: var(--color-brand-50);
+  --sidebar-accent-foreground: var(--color-brand-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-brand-300);
+  --chart-1: var(--color-brand-500);
+  --chart-2: var(--color-info);
+  --chart-3: var(--color-warning);
+  --chart-4: var(--color-success);
+  --chart-5: var(--color-danger);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
