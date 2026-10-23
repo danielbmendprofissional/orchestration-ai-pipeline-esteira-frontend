@@ -1,8 +1,8 @@
 /*
  * Tokens da Esteira: fonte única. O @theme alimenta os utilitários do Tailwind; o :root traduz
  * os mesmos valores para as variáveis que os componentes spartan (helm) leem — nunca o tema de
- * fábrica do spartan. Valores ainda são a semente de docs/design/tokens.md: a definição do design
- * (D0, /impeccable init → DESIGN.md) troca aqui.
+ * fábrica do spartan. Valores definidos na D0 (protótipos em ../docs/design/prototipos/,
+ * descrição em DESIGN.md). Só tema escuro: fundo preto/grafite é decisão do produto.
  */
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -11,85 +11,132 @@
 
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
 
+/* Fontes empacotadas com o app: o CSP só aceita font-src 'self' (nginx/security-headers). */
+@import '@fontsource-variable/mona-sans';
+@import '@fontsource-variable/geist-mono';
+
 @theme {
-  --color-brand-50: #f4f7f5;
-  --color-brand-100: #e3ebe6;
-  --color-brand-200: color-mix(in oklab, var(--color-brand-100), var(--color-brand-300));
-  --color-brand-300: #9bb8a8;
-  --color-brand-400: color-mix(in oklab, var(--color-brand-300), var(--color-brand-500));
-  --color-brand-500: #3d6b52;
-  --color-brand-600: color-mix(in oklab, var(--color-brand-500), var(--color-brand-700));
-  --color-brand-700: #274538;
-  --color-brand-800: color-mix(in oklab, var(--color-brand-700), var(--color-brand-900));
-  --color-brand-900: #132420;
-  --color-brand-950: color-mix(in oklab, var(--color-brand-900), black 30%);
+  /* superfícies, do fundo para cima */
+  --color-surface-0: #08080a;
+  --color-surface-1: #101012;
+  --color-surface-2: #161619;
+  --color-surface-3: #1d1d21;
+  --color-rail: #000000;
+  --color-line: #26262b;
+  --color-line-strong: #36363d;
+  --color-highlight: #ffffff12;
 
-  --color-neutral-0: #ffffff;
-  --color-neutral-50: #f7f7f6;
-  --color-neutral-100: color-mix(in oklab, var(--color-neutral-50), var(--color-neutral-200));
-  --color-neutral-200: #e2e1de;
-  --color-neutral-300: color-mix(in oklab, var(--color-neutral-200), var(--color-neutral-500) 33%);
-  --color-neutral-400: color-mix(in oklab, var(--color-neutral-200), var(--color-neutral-500) 66%);
-  --color-neutral-500: #7a7873;
-  --color-neutral-600: color-mix(in oklab, var(--color-neutral-500), var(--color-neutral-800) 33%);
-  --color-neutral-700: color-mix(in oklab, var(--color-neutral-500), var(--color-neutral-800) 66%);
-  --color-neutral-800: #2c2b28;
-  --color-neutral-900: color-mix(in oklab, var(--color-neutral-800), var(--color-neutral-950));
-  --color-neutral-950: #161513;
+  /* texto */
+  --color-fg: #fafafa;
+  --color-fg-2: #d4d4d8;
+  --color-fg-muted: #a1a1aa;
+  --color-fg-dim: #8b8b94;
 
-  --color-success: #2f7a4f;
-  --color-warning: #a3670c;
-  --color-danger: #b3392c;
-  --color-info: #2f6f8f;
+  /* marca: azul só em marca, ação principal e seleção */
+  --color-brand: #0a4ee4;
+  --color-brand-hover: #2d6bff;
+  --color-brand-fg: #7aa2ff;
+  --color-brand-soft: #0a4ee41f;
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-sans: 'Source Sans 3', 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', Consolas, monospace;
+  /* status, estilo GitHub Actions (nunca só por cor: sempre com ícone e texto) */
+  --color-ok: #2ea043;
+  --color-ok-fg: #56d364;
+  --color-ok-soft: #2ea0431a;
+  --color-ok-line: #2ea04366;
+  --color-run: #d29922;
+  --color-run-fg: #e3b341;
+  --color-run-soft: #d299221a;
+  --color-run-line: #d2992266;
+  --color-bad: #f85149;
+  --color-bad-fg: #ff7b72;
+  --color-bad-soft: #f851491a;
+  --color-bad-line: #f8514966;
 
-  --radius-sm: 0.25rem;
+  /* severidade de achado (crítica = bad, alta = run) */
+  --color-sev-media: #c9b458;
+  --color-sev-baixa: #7aa2ff;
+
+  /* trilho do segundo projeto no mapa de etapas */
+  --color-lane-2: #e4e4e7;
+
+  /* gráficos: azul × laranja (verde × vermelho reprova para daltonismo) */
+  --color-chart-a: #2d6bff;
+  --color-chart-b: #d9732a;
+
+  --font-sans: 'Mona Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, Consolas, monospace;
+
+  /* escala densa de app: corpo em 14px */
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1.4;
+  --text-xs: 0.78125rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.45;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.45;
+  --text-lg: 0.9375rem;
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.1875rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.375rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 1.75rem;
+  --text-3xl--line-height: 1.15;
+
+  --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* profundidade por camada de superfície; sombra só em brilho de borda e no que flutua */
+  --shadow-edge: inset 0 1px 0 var(--color-highlight);
+  --shadow-popover: 0 18px 40px #000c, inset 0 1px 0 var(--color-highlight);
+  --shadow-drawer: -24px 0 48px #000a;
+  --shadow-focus: 0 0 0 3px #0a4ee433;
+
+  /* menu lateral vira só ícones abaixo de "rail" e barra no topo abaixo de "md" */
+  --breakpoint-md: 47.5rem;
+  --breakpoint-rail: 68.75rem;
+  --container-content: 105rem;
 }
 
-/* Contrato de variáveis do spartan → tokens. Só claro por enquanto: escuro (ou não) sai da D0. */
+/* Contrato de variáveis do spartan → tokens. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
   --radius: var(--radius-md);
-  --background: var(--color-neutral-50);
-  --foreground: var(--color-neutral-800);
-  --card: var(--color-neutral-0);
-  --card-foreground: var(--color-neutral-800);
-  --popover: var(--color-neutral-0);
-  --popover-foreground: var(--color-neutral-800);
-  --primary: var(--color-brand-500);
-  --primary-foreground: var(--color-neutral-0);
-  --secondary: var(--color-brand-100);
-  --secondary-foreground: var(--color-brand-900);
-  --muted: var(--color-neutral-100);
-  --muted-foreground: var(--color-neutral-600);
-  --accent: var(--color-brand-50);
-  --accent-foreground: var(--color-brand-900);
-  --destructive: var(--color-danger);
-  --border: var(--color-neutral-200);
-  --input: var(--color-neutral-200);
-  --ring: var(--color-brand-300);
-  --sidebar: var(--color-neutral-0);
-  --sidebar-foreground: var(--color-neutral-800);
-  --sidebar-primary: var(--color-brand-500);
-  --sidebar-primary-foreground: var(--color-neutral-0);
-  --sidebar-accent: var(--color-brand-50);
-  --sidebar-accent-foreground: var(--color-brand-900);
-  --sidebar-border: var(--color-neutral-200);
-  --sidebar-ring: var(--color-brand-300);
-  --chart-1: var(--color-brand-500);
-  --chart-2: var(--color-info);
-  --chart-3: var(--color-warning);
-  --chart-4: var(--color-success);
-  --chart-5: var(--color-danger);
+  --background: var(--color-surface-0);
+  --foreground: var(--color-fg);
+  --card: var(--color-surface-1);
+  --card-foreground: var(--color-fg);
+  --popover: var(--color-surface-1);
+  --popover-foreground: var(--color-fg);
+  --primary: var(--color-brand);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-surface-2);
+  --secondary-foreground: var(--color-fg);
+  --muted: var(--color-surface-2);
+  --muted-foreground: var(--color-fg-muted);
+  --accent: var(--color-surface-3);
+  --accent-foreground: var(--color-fg);
+  --destructive: var(--color-bad);
+  --border: var(--color-line);
+  --input: var(--color-line-strong);
+  --ring: var(--color-brand-fg);
+  --sidebar: var(--color-rail);
+  --sidebar-foreground: var(--color-fg-muted);
+  --sidebar-primary: var(--color-brand);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--color-surface-2);
+  --sidebar-accent-foreground: var(--color-fg);
+  --sidebar-border: var(--color-line);
+  --sidebar-ring: var(--color-brand-fg);
+  --chart-1: var(--color-chart-a);
+  --chart-2: var(--color-chart-b);
+  --chart-3: var(--color-ok);
+  --chart-4: var(--color-run);
+  --chart-5: var(--color-bad);
 }
 
 @layer base {
@@ -97,6 +144,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans text-base;
   }
 }
