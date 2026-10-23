@@ -1,0 +1,42 @@
+{
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/prototipo-abrir-entrega.html"
+        ],
+        "createdAt": "2026-10-23T10:42:02.849Z",
+        "reason": "Claude: falso positivo; lista/tabela com cabeçalho de altura fixa (38px) e linhas com padding próprio, mesmo padrão da prototipo-entregas.html aprovada"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/prototipo-aplicacoes.html"
+        ],
+        "createdAt": "2026-10-23T10:42:03.022Z",
+        "reason": "Claude: falso positivo; lista/tabela com cabeçalho de altura fixa (38px) e linhas com padding próprio, mesmo padrão da prototipo-entregas.html aprovada"
+      },
+      {
+        "rule": "overused-font",
+        "value": "mona sans",
+        "createdAt": "2026-10-23T12:28:18.869Z",
+        "reason": "user confirmed: Daniel escolheu Mona Sans + Geist Mono em 2026-10-23 entre 5 opções comparadas (prototipo-fontes.html)"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/prototipo-excecoes.html"
+        ],
+        "createdAt": "2026-10-23T12:28:19.043Z",
+        "reason": "Claude: falso positivo; lista com cabeçalho de altura fixa (38px) e linhas com padding próprio, mesmo padrão aprovado em Entregas e Aplicações"
+      }
+    ]
+  }
+}
