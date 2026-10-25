@@ -36,6 +36,15 @@
         ],
         "createdAt": "2026-10-23T12:28:19.043Z",
         "reason": "Claude: falso positivo; lista com cabeçalho de altura fixa (38px) e linhas com padding próprio, mesmo padrão aprovado em Entregas e Aplicações"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/prototipo-excecoes.html"
+        ],
+        "createdAt": "2026-10-23T12:56:51.779Z",
+        "reason": "Claude: falso positivo; protótipo local carrega as fontes do Google Fonts (Mona Sans, Geist) com nome diferente do empacotado declarado no DESIGN.md (Mona Sans Variable, Geist Mono Variable)"
       }
     ]
   }
