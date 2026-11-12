@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AppConfigService } from './app-config.service';
 
-describe('AppConfigService', () => {
+describe('[F0] AppConfigService', () => {
   let servico: AppConfigService;
   let http: HttpTestingController;
 

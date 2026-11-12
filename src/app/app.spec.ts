@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { AppConfigService } from './core/config/app-config.service';
 
-describe('App', () => {
+describe('[F0] App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],

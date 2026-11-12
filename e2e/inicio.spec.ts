@@ -1,14 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-test('abre a Esteira com o ambiente do /config.json', async ({ page }) => {
+test('abre a Esteira com o ambiente do /config.json', { tag: '@F0' }, async ({ page }) => {
   await page.goto('/');
 
   await expect(page.getByRole('heading', { level: 1, name: 'Esteira' })).toBeVisible();
   await expect(page.getByText('DEV')).toBeVisible();
 });
 
-test('não tem violação de acessibilidade WCAG 2.1 AA', async ({ page }) => {
+test('não tem violação de acessibilidade WCAG 2.1 AA', { tag: '@F0' }, async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
