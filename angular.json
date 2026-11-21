@@ -44,6 +44,10 @@
               "outputHashing": "all"
             },
             "development": {
+              "assets": [
+                { "glob": "**/*", "input": "public", "ignore": ["features.json"] },
+                { "glob": "features.json", "input": "src/dev" }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
