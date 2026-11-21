@@ -55,6 +55,19 @@ describe('[F0.5] itensDeMenu', () => {
     expect(itensDeMenu(rotas, ['auditor']).map((i) => i.rotulo)).toEqual(['Início', 'Auditoria']);
   });
 
+  it('esconde o filho de uma rota restrita: quem não abre o pai não vê o filho no menu', () => {
+    const rotas: Routes = [
+      {
+        path: 'admin',
+        data: { perfis: ['mor'] } satisfies RotaData,
+        children: [{ path: 'usuarios', data: menu('Usuários') }],
+      },
+    ];
+
+    expect(itensDeMenu(rotas, ['analista'])).toEqual([]);
+    expect(itensDeMenu(rotas, ['mor']).map((i) => i.caminho)).toEqual(['/admin/usuarios']);
+  });
+
   it('trata perfis vazios como sem restrição', () => {
     const rotas: Routes = [{ path: 'x', data: { ...menu('X'), perfis: [] } satisfies RotaData }];
 

@@ -80,7 +80,11 @@ test.describe('responsivo', () => {
   const casos = [
     { largura: 2560, menu: 'completo' },
     { largura: 1280, menu: 'completo' },
+    { largura: 1100, menu: 'completo' },
+    { largura: 1099, menu: 'icones' },
     { largura: 1000, menu: 'icones' },
+    { largura: 760, menu: 'icones' },
+    { largura: 759, menu: 'barra' },
     { largura: 700, menu: 'barra' },
     { largura: 320, menu: 'barra' },
   ] as const;
@@ -167,5 +171,12 @@ test.describe('acessibilidade e teclado', () => {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('menu')).toBeHidden();
     await expect(menuDoUsuario(page)).toBeFocused();
+
+    // 4. Sair também funciona só pelo teclado
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await page.getByRole('menuitem', { name: 'Sair' }).focus();
+    await page.keyboard.press('Enter');
+    await page.waitForURL('**/api/v1/auth/logout');
   });
 });

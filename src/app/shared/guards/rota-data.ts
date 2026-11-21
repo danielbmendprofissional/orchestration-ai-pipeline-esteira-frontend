@@ -8,3 +8,8 @@ export interface RotaData {
   /** Perfis (de `realm_access.roles`, via `/usuarios/me`) que podem abrir a rota; ausente ou vazio = qualquer usuário logado. */
   perfis?: string[];
 }
+
+/** Regra única de perfis, usada pelo `perfilGuard` e pelo menu: sem exigência libera; com exigência, vale ter um deles. */
+export function perfilPermite(exigidos: string[] | undefined, doUsuario: readonly string[]): boolean {
+  return !exigidos?.length || doUsuario.some((perfil) => exigidos.includes(perfil));
+}

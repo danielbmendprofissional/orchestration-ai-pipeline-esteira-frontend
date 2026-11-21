@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
-import type { RotaData } from './rota-data';
+import { perfilPermite, type RotaData } from './rota-data';
 
 /**
  * Perfil é só o que o `me` devolve. O front não reimplementa regra de papel: papéis por Aplicação e
@@ -17,5 +17,5 @@ export const perfilGuard: CanActivateFn = (route, state) => {
     auth.entrar(state.url);
     return false;
   }
-  return usuario.perfis.some((perfil) => exigidos.includes(perfil)) || inject(Router).createUrlTree(['/sem-acesso']);
+  return perfilPermite(exigidos, usuario.perfis) || inject(Router).createUrlTree(['/sem-acesso']);
 };

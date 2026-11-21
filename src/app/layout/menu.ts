@@ -1,5 +1,5 @@
 import type { Routes } from '@angular/router';
-import type { RotaData } from '../shared/guards/rota-data';
+import { perfilPermite, type RotaData } from '../shared/guards/rota-data';
 
 export interface ItemMenu {
   rotulo: string;
@@ -17,12 +17,11 @@ export function itensDeMenu(rotas: Routes, perfisDoUsuario: readonly string[], p
     const caminho = segmento ? `${prefixo}/${segmento}` : prefixo || '/';
     const data = (rota.data ?? {}) as RotaData;
 
-    const proprio: ItemMenu[] = data.menu && podeVer(data.perfis, perfisDoUsuario) ? [{ ...data.menu, caminho }] : [];
+    // Rota restrita esconde também os filhos: quem não abre o pai não vê o filho (o guard do pai o barraria).
+    if (!perfilPermite(data.perfis, perfisDoUsuario)) return [];
+
+    const proprio: ItemMenu[] = data.menu ? [{ ...data.menu, caminho }] : [];
     const filhos = rota.children ? itensDeMenu(rota.children, perfisDoUsuario, caminho === '/' ? '' : caminho) : [];
     return [...proprio, ...filhos];
   });
-}
-
-function podeVer(exigidos: string[] | undefined, doUsuario: readonly string[]): boolean {
-  return !exigidos?.length || doUsuario.some((perfil) => exigidos.includes(perfil));
 }
