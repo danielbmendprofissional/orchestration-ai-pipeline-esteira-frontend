@@ -101,6 +101,16 @@ describe('[F0.5] errorInterceptor', () => {
     expect(erro).not.toHaveBeenCalled();
   });
 
+  it('não mostra toast para erro de requisição que não é da API', async () => {
+    const resultado = firstValueFrom(cliente.get('https://terceiro.example/x')).catch((e: unknown) => e);
+    http
+      .expectOne('https://terceiro.example/x')
+      .flush({ errors: [{ code: 'x.y', message: 'texto de terceiro', type: 'Failure' }] }, { status: 422, statusText: 'x' });
+    await resultado;
+
+    expect(erro).not.toHaveBeenCalled();
+  });
+
   it('não interfere na resposta de sucesso', async () => {
     const resultado = firstValueFrom(cliente.get('/api/x'));
     http.expectOne('/api/x').flush({ ok: true });

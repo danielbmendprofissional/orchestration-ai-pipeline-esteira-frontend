@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { Notificador } from '../notificacao/notificador.service';
-import { errosDaResposta } from './erro-api';
+import { ehDaApi, errosDaResposta } from './erro-api';
 
 export const MENSAGEM_GENERICA = 'Algo deu errado. Tente de novo.';
 
@@ -22,7 +22,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((erro: unknown) => {
-      if (!(erro instanceof HttpErrorResponse) || erro.status === 401) return throwError(() => erro);
+      if (!(erro instanceof HttpErrorResponse) || erro.status === 401 || !ehDaApi(req.url)) return throwError(() => erro);
 
       const erros = errosDaResposta(erro);
       if (erros.length > 0) {

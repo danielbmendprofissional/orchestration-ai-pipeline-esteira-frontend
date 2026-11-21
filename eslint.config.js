@@ -36,18 +36,20 @@ module.exports = defineConfig([
       // F0.5, critério 9: nenhum token, cookie ou dado de sessão no navegador (BFF, ADR-0004).
       'no-restricted-globals': [
         'error',
-        ...['localStorage', 'sessionStorage', 'indexedDB'].map((name) => ({
+        ...['localStorage', 'sessionStorage', 'indexedDB', 'cookieStore', 'caches'].map((name) => ({
           name,
           message: 'Nada de sessão no navegador: o BFF guarda tudo no servidor (ADR-0004).',
         })),
       ],
       'no-restricted-properties': [
         'error',
-        ...['localStorage', 'sessionStorage', 'indexedDB'].map((property) => ({
-          object: 'window',
-          property,
-          message: 'Nada de sessão no navegador: o BFF guarda tudo no servidor (ADR-0004).',
-        })),
+        ...['window', 'globalThis', 'self'].flatMap((object) =>
+          ['localStorage', 'sessionStorage', 'indexedDB', 'cookieStore', 'caches'].map((property) => ({
+            object,
+            property,
+            message: 'Nada de sessão no navegador: o BFF guarda tudo no servidor (ADR-0004).',
+          })),
+        ),
         {
           object: 'document',
           property: 'cookie',

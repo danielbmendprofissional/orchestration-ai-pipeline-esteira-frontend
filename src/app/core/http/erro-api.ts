@@ -22,3 +22,13 @@ export function errosDaResposta(erro: unknown): ErroApi[] {
 export function codigoDoErro(erro: unknown): string | null {
   return errosDaResposta(erro)[0]?.code ?? null;
 }
+
+/** Só a nossa API (mesma origem, em `/api/`) fala o contrato de sessão e de erro: outro host nunca dispara refresh, login nem toast. */
+export function ehDaApi(url: string): boolean {
+  return url.startsWith('/api/');
+}
+
+/** Caminho sem query nem barra final, para comparar rotas da API. */
+export function caminhoDe(url: string): string {
+  return url.split('?')[0].replace(/\/+$/, '');
+}

@@ -142,6 +142,31 @@ describe('[F0.5] sessaoInterceptor', () => {
     expect(irPara).not.toHaveBeenCalled();
   });
 
+  it('ignora requisições que não são da API (outro host não dispara refresh nem login)', async () => {
+    const resultado = firstValueFrom(cliente.get('https://terceiro.example/x')).catch((e: unknown) => e);
+
+    http.expectOne('https://terceiro.example/x').flush(corpo(EXPIRADO), NAO_AUTORIZADO);
+    await tick();
+
+    expect(((await resultado) as HttpErrorResponse).status).toBe(401);
+    http.expectNone(REFRESH);
+    expect(irPara).not.toHaveBeenCalled();
+  });
+
+  it.each([EXPIRADO, NAO_AUTENTICADO, SESSAO_INVALIDA])(
+    'vai ao login quando o próprio refresh volta 401 %s, inclusive com query na URL',
+    async (code) => {
+      const resultado = firstValueFrom(cliente.post('/api/v1/auth/refresh?x=1', null)).catch((e: unknown) => e);
+
+      http.expectOne('/api/v1/auth/refresh?x=1').flush(corpo(code), NAO_AUTORIZADO);
+      await tick();
+
+      expect(await resultado).toBeInstanceOf(HttpErrorResponse);
+      expect(irPara).toHaveBeenCalledWith(LOGIN);
+      http.expectNone(REFRESH); // sem refresh recursivo
+    },
+  );
+
   it('boot: renova e repete o /usuarios/me quando o token venceu, sem mostrar login', async () => {
     const auth = TestBed.inject(AuthService);
     const boot = auth.carregar();

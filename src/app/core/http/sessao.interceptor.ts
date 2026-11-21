@@ -10,7 +10,7 @@ import { inject } from '@angular/core';
 import { Observable, catchError, defer, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { RenovacaoSessaoService } from '../auth/renovacao-sessao.service';
-import { CODIGO, codigoDoErro } from './erro-api';
+import { CODIGO, caminhoDe, codigoDoErro, ehDaApi } from './erro-api';
 
 const URL_REFRESH = '/api/v1/auth/refresh';
 
@@ -31,7 +31,7 @@ const JA_REPETIDA = new HttpContextToken<boolean>(() => false);
 export const sessaoInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const renovacao = inject(RenovacaoSessaoService);
-  return tratar(req, next, auth, renovacao);
+  return ehDaApi(req.url) ? tratar(req, next, auth, renovacao) : next(req);
 };
 
 function tratar(
@@ -45,7 +45,7 @@ function tratar(
       if (!(erro instanceof HttpErrorResponse) || erro.status !== 401) return throwError(() => erro);
 
       const codigo = codigoDoErro(erro);
-      const ehRefresh = req.url === URL_REFRESH;
+      const ehRefresh = caminhoDe(req.url) === URL_REFRESH;
 
       if (codigo === CODIGO.tokenExpirado && !ehRefresh && !req.context.get(JA_REPETIDA)) {
         // defer: o POST sai no mesmo instante em que o 401 chega, e o switchMap repete a original só depois.
@@ -54,7 +54,8 @@ function tratar(
         );
       }
 
-      if (codigo === CODIGO.naoAutenticado || codigo === CODIGO.sessaoInvalida) auth.entrar();
+      // 401 do próprio refresh, com qualquer código, é fim de sessão: sem login o usuário ficaria preso.
+      if (ehRefresh || codigo === CODIGO.naoAutenticado || codigo === CODIGO.sessaoInvalida) auth.entrar();
       return throwError(() => erro);
     }),
   );

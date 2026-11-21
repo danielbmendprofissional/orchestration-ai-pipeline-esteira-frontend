@@ -11,6 +11,8 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layout/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
+    // canActivate só roda na entrada do shell; o menu navega filho a filho e precisa rechecar a sessão.
+    canActivateChild: [authGuard],
     children: [
       {
         path: '',
