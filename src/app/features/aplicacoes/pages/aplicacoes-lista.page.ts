@@ -90,7 +90,7 @@ const SITUACOES: { valor: Situacao; rotulo: string }[] = [
       }
     }
 
-    <est-aplicacao-gaveta modo="nova" [(aberta)]="gavetaAberta" />
+    <est-aplicacao-gaveta modo="nova" [salvar]="criar" [(aberta)]="gavetaAberta" />
   `,
 })
 export class AplicacoesListaPage implements OnInit {
@@ -98,6 +98,8 @@ export class AplicacoesListaPage implements OnInit {
   protected readonly situacoes = SITUACOES;
   protected readonly gavetaAberta = signal(false);
   private readonly gaveta = viewChild.required(AplicacaoGavetaComponent);
+
+  protected readonly criar = (v: { nome: string; sigla: string; grupoGitLab: string }) => this.dominio.criar(v);
 
   ngOnInit(): void {
     void this.dominio.carregarLista();

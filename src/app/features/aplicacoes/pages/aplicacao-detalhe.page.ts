@@ -98,7 +98,7 @@ const ABAS = [
         </div>
       </hlm-tabs>
 
-      <est-aplicacao-gaveta modo="editar" [aplicacao]="a" [(aberta)]="gavetaAberta" />
+      <est-aplicacao-gaveta modo="editar" [aplicacao]="a" [salvar]="alterarCadastro" [(aberta)]="gavetaAberta" />
     } @else {
       <p class="text-fg-muted" role="status">Carregando…</p>
     }
@@ -121,6 +121,8 @@ export class AplicacaoDetalhePage {
   protected readonly salvarDestino = (projetoId: string, ambiente: string, destinoId: string | null, form: FormDestino) =>
     this.dominio.salvarDestino(projetoId, ambiente, destinoId, form);
 
+  protected readonly alterarCadastro = (v: { nome: string; sigla: string; ativa: boolean }) =>
+    this.dominio.alterar(this.idDaAplicacao(), { nome: v.nome, sigla: v.sigla, ativa: v.ativa });
   protected readonly salvarPolitica = (ambiente: string, pedido: AlterarPoliticaRequest) =>
     this.dominio.alterarPolitica(this.idDaAplicacao(), ambiente, pedido);
   protected readonly buscarPessoas = (texto: string) => this.dominio.buscarPessoas(texto);

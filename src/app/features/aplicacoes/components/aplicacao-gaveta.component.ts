@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, signal } from '@angular/core';
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { AplicacoesService, type CampoDoForm } from '../aplicacoes.service';
+import type { CampoDoForm, ResultadoComando } from '../aplicacoes.service';
 import type { AplicacaoDetalhe } from '../aplicacoes.tipos';
 
 const CAMPOS: { nome: CampoDoForm; rotulo: string }[] = [
@@ -69,12 +69,12 @@ const CAMPOS: { nome: CampoDoForm; rotulo: string }[] = [
   `,
 })
 export class AplicacaoGavetaComponent {
-  private readonly dominio = inject(AplicacoesService);
-
   readonly modo = input.required<'nova' | 'editar'>();
   /** Aplicação sendo editada (modo `editar`). */
   readonly aplicacao = input<AplicacaoDetalhe | null>(null);
   readonly aberta = model(false);
+  /** A page injeta o serviço e entrega a ação (camada Dumb não injeta serviço). */
+  readonly salvar = input.required<(valores: { nome: string; sigla: string; grupoGitLab: string; ativa: boolean }) => Promise<ResultadoComando>>();
 
   protected readonly campos = CAMPOS;
   protected readonly enviando = signal(false);
@@ -127,10 +127,7 @@ export class AplicacaoGavetaComponent {
 
     this.enviando.set(true);
     try {
-      const resultado =
-        this.modo() === 'nova'
-          ? await this.dominio.criar(v)
-          : await this.dominio.alterar(this.aplicacao()?.id ?? '', { nome: v.nome, sigla: v.sigla, ativa: this.ativa() });
+      const resultado = await this.salvar()({ ...v, ativa: this.ativa() });
       if (resultado.ok) this.aberta.set(false);
       else if (resultado.campo) this.erros.set({ [resultado.campo]: resultado.mensagem });
     } finally {

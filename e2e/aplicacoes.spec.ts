@@ -18,7 +18,11 @@ const ambientes = (prefixo: string): Esquemas['AmbienteProjetoDto'][] =>
  * API simulada do cadastro (A1): estado em memória, tipado pelo contrato gerado. `pode` liga ou desliga todas as
  * permissões, como a API faria pelo papel do usuário.
  */
-async function comCadastro(page: Page, pode: boolean) {
+type Permissoes = { podeCriar: boolean; podeEditar: boolean; podeEditarCadastro: boolean; podeEditarPolitica: boolean; podeGerenciarPapeis: boolean };
+const TODAS = (v: boolean): Permissoes => ({ podeCriar: v, podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v });
+const ANALISTA: Permissoes = { ...TODAS(false), podeEditar: true };
+
+async function comCadastro(page: Page, permissoes: Permissoes) {
   const aplicacao: Esquemas['AplicacaoDetalheDto'] = { id: ID, nome: 'Valuto', sigla: 'VLT', grupo: 'valuto', ativa: true, projetos: [], papeis: [],
     politicas: [
       { id: 'po1', ambiente: 'review', critica: null, alta: null, media: null, baixa: null, modo: 'avisa' },
@@ -39,9 +43,9 @@ async function comCadastro(page: Page, pode: boolean) {
     const metodo = req.method();
     const corpo = req.postDataJSON?.() as Record<string, unknown> | null;
 
-    if (pathname === '/api/v1/aplicacoes/permissoes') return json(rota, 200, { podeCriar: pode });
+    if (pathname === '/api/v1/aplicacoes/permissoes') return json(rota, 200, { podeCriar: permissoes.podeCriar });
     if (pathname === `/api/v1/aplicacoes/${ID}/permissoes`)
-      return json(rota, 200, { podeEditar: pode, podeEditarCadastro: pode, podeEditarPolitica: pode, podeGerenciarPapeis: pode });
+      return json(rota, 200, { podeEditar: permissoes.podeEditar, podeEditarCadastro: permissoes.podeEditarCadastro, podeEditarPolitica: permissoes.podeEditarPolitica, podeGerenciarPapeis: permissoes.podeGerenciarPapeis });
     if (pathname === `/api/v1/aplicacoes/${ID}/gitlab/projetos`)
       return json(rota, 200, grupo.map((g) => ({ ...g, cadastrado: aplicacao.projetos!.some((p) => p.caminho === g.caminho) })));
     if (pathname === `/api/v1/aplicacoes/${ID}/projetos` && metodo === 'POST') {
@@ -98,7 +102,7 @@ async function semViolacoes(page: Page) {
 test.describe('cadastro de Aplicação (A1)', () => {
   test('MOR cadastra projetos, dependência e destinos, e as 5 abas passam no axe', { tag: '@A1' }, async ({ page }) => {
     await comSessao(page);
-    await comCadastro(page, true);
+    await comCadastro(page, TODAS(true));
 
     await page.goto('/aplicacoes');
     await expect(page.getByRole('heading', { level: 1, name: 'Aplicações' })).toBeVisible();
@@ -157,7 +161,7 @@ test.describe('cadastro de Aplicação (A1)', () => {
 
   test('usuário sem permissão não vê Nova aplicação nem as ações de edição', { tag: '@A1' }, async ({ page }) => {
     await comSessao(page, SEM_PAPEL);
-    await comCadastro(page, false);
+    await comCadastro(page, TODAS(false));
 
     await page.goto('/aplicacoes');
     await expect(page.getByRole('heading', { level: 1, name: 'Aplicações' })).toBeVisible();
@@ -168,5 +172,23 @@ test.describe('cadastro de Aplicação (A1)', () => {
     await expect(page.getByRole('button', { name: 'Editar aplicação' })).toHaveCount(0);
     await aba(page, 'Projetos').click();
     await expect(page.getByRole('button', { name: 'Adicionar projetos' })).toHaveCount(0);
+    await aba(page, 'Pessoas e papéis').click();
+    await expect(page.getByRole('button', { name: 'Adicionar pessoa' })).toHaveCount(0);
+  });
+
+  test('analista edita projetos e destinos, mas não gerencia pessoas nem cria aplicação', { tag: '@A1' }, async ({ page }) => {
+    await comSessao(page, SEM_PAPEL);
+    await comCadastro(page, ANALISTA);
+
+    await page.goto('/aplicacoes');
+    await expect(page.getByRole('button', { name: 'Nova aplicação' })).toHaveCount(0);
+
+    await page.getByRole('link', { name: 'Valuto' }).click();
+    await aba(page, 'Projetos').click();
+    await expect(page.getByRole('button', { name: 'Adicionar projetos' })).toBeVisible();
+    await aba(page, 'Pessoas e papéis').click();
+    await expect(page.getByRole('button', { name: 'Adicionar pessoa' })).toHaveCount(0);
+    await aba(page, 'Política de segurança').click();
+    await expect(page.getByRole('button', { name: 'Salvar review' })).toHaveCount(0);
   });
 });
