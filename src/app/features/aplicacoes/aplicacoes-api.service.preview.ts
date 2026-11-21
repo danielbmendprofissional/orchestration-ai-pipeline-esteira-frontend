@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import type { Pagina, PedidoDePagina } from '../../core/http/paginacao';
 import type {
   AlterarAplicacaoRequest,
+  AlterarPoliticaRequest,
   AplicacaoDetalhe,
   AplicacaoLista,
   CadastrarProjetoRequest,
@@ -9,10 +10,14 @@ import type {
   Destino,
   DestinoRequest,
   FiltroApi,
+  PapelResumo,
   PermissoesAplicacao,
   PermissoesGlobais,
+  PessoaLista,
+  Politica,
   ProjetoGitLabItem,
   ProjetoResumo,
+  VincularPapelRequest,
 } from './aplicacoes.tipos';
 
 /**
@@ -45,6 +50,19 @@ function acharProjeto(projetos: ProjetoResumo[], id: string): ProjetoResumo {
   return projeto;
 }
 
+const PESSOAS: PessoaLista[] = [
+  { sub: 'dev', nome: 'Dev Esteira', email: 'dev@esteira.local' },
+  { sub: 'ana', nome: 'Ana Souza', email: 'ana@esteira.local' },
+  { sub: 'beto', nome: 'Beto Lima', email: 'beto@esteira.local' },
+];
+
+const POLITICAS_INICIAIS = (): Politica[] => [
+  { id: 'po-review', ambiente: 'review', critica: null, alta: null, media: null, baixa: null, modo: 'avisa' },
+  { id: 'po-qa', ambiente: 'qa', critica: 0, alta: 0, media: null, baixa: null, modo: 'bloqueia' },
+  { id: 'po-hml', ambiente: 'hml', critica: 0, alta: 0, media: null, baixa: null, modo: 'bloqueia' },
+  { id: 'po-producao', ambiente: 'producao', critica: 0, alta: 0, media: null, baixa: null, modo: 'bloqueia' },
+];
+
 const GRUPO: ProjetoGitLabItem[] = [
   { projetoGitLabId: 1, caminho: 'valuto/api', nome: 'api', cadastrado: true, stackSugerida: 'dotnet' },
   { projetoGitLabId: 2, caminho: 'valuto/web', nome: 'web', cadastrado: true, stackSugerida: 'angular' },
@@ -56,6 +74,8 @@ const GRUPO: ProjetoGitLabItem[] = [
 export class AplicacoesApiService {
   private readonly dados: AplicacaoLista[] = APLICACOES.map((a) => ({ ...a }));
   private readonly projetos: ProjetoResumo[] = [novoProjeto('p-api', 'valuto/api', 'dotnet'), novoProjeto('p-web', 'valuto/web', 'angular')];
+  private readonly politicas: Politica[] = POLITICAS_INICIAIS();
+  private papeis: PapelResumo[] = [{ id: 'pp-1', usuario: 'ana', nome: 'Ana Souza', email: 'ana@esteira.local', papel: 'analista' }];
   private contador = 0;
 
   listar(filtro: FiltroApi, pedido: PedidoDePagina): Promise<Pagina<AplicacaoLista>> {
@@ -85,7 +105,7 @@ export class AplicacoesApiService {
   obter(id: string): Promise<AplicacaoDetalhe> {
     const a = this.dados.find((x) => x.id === id);
     if (!a) return Promise.reject(new Error('Aplicação do preview não encontrada.'));
-    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, politicas: [], projetos: this.projetos.map((p) => structuredClone(p)), papeis: [] });
+    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, politicas: structuredClone(this.politicas), projetos: this.projetos.map((p) => structuredClone(p)), papeis: structuredClone(this.papeis) });
   }
 
   criar(pedido: CriarAplicacaoRequest): Promise<AplicacaoLista> {
@@ -153,4 +173,31 @@ export class AplicacoesApiService {
     return Promise.resolve();
   }
 
+
+  alterarPolitica(id: string, ambiente: string, pedido: AlterarPoliticaRequest): Promise<Politica> {
+    void id;
+    const atual = this.politicas.find((p) => p.ambiente === ambiente);
+    if (!atual) return Promise.reject(new Error('Política do preview não encontrada.'));
+    Object.assign(atual, { critica: pedido.critica, alta: pedido.alta, media: pedido.media, baixa: pedido.baixa, modo: pedido.modo ?? atual.modo });
+    return Promise.resolve({ ...atual });
+  }
+
+  buscarPessoas(busca: string): Promise<PessoaLista[]> {
+    const termo = busca.toLowerCase();
+    return Promise.resolve(PESSOAS.filter((p) => `${p.nome} ${p.email}`.toLowerCase().includes(termo)));
+  }
+
+  vincularPapel(id: string, pedido: VincularPapelRequest): Promise<PapelResumo> {
+    void id;
+    const pessoa = PESSOAS.find((p) => p.sub === pedido.usuario);
+    const papel: PapelResumo = { id: `pp-${++this.contador}`, usuario: pedido.usuario ?? '', nome: pessoa?.nome, email: pessoa?.email, papel: pedido.papel ?? '' };
+    this.papeis.push(papel);
+    return Promise.resolve({ ...papel });
+  }
+
+  desvincularPapel(id: string, papelId: string): Promise<void> {
+    void id;
+    this.papeis = this.papeis.filter((p) => p.id !== papelId);
+    return Promise.resolve();
+  }
 }

@@ -76,14 +76,15 @@ describe('[A1] AplicacaoDetalhePage', () => {
     expect(raiz.querySelector('[role=tab][aria-selected=true]')?.textContent).toContain('Cadastro');
   });
 
-  it('as abas ainda não implementadas mostram "em construção"', async () => {
+  it('nenhuma aba é mais "em construção": cada uma mostra o próprio conteúdo', async () => {
     await montar(true);
 
-    const projetos = Array.from(raiz.querySelectorAll<HTMLElement>('[role=tab]')).find((t) => t.textContent?.includes('Política'))!;
-    projetos.click();
-    await estavel();
-
-    expect(raiz.querySelector('[role=tabpanel]:not([hidden])')?.textContent).toContain('em construção');
+    for (const nome of ['Projetos', 'Ambientes e destinos', 'Política de segurança', 'Pessoas e papéis']) {
+      const aba = Array.from(raiz.querySelectorAll<HTMLElement>('[role=tab]')).find((x) => x.textContent?.includes(nome))!;
+      aba.click();
+      await estavel();
+      expect(raiz.querySelector('[role=tabpanel]:not([hidden])')?.textContent).not.toContain('em construção');
+    }
   });
 
   it('com permissão, a aba Cadastro oferece editar; sem permissão a ação nem aparece (critério 18)', async () => {

@@ -3,12 +3,15 @@ import { codigoDoErro } from '../../core/http/erro-api';
 import type { Pagina } from '../../core/http/paginacao';
 import { AplicacoesApiService } from './aplicacoes-api.service';
 import type {
+  AlterarPoliticaRequest,
   AplicacaoDetalhe,
   AplicacaoLista,
   ColunaOrdenavel,
   Destino,
   FiltroApi,
+  PapelResumo,
   PermissoesAplicacao,
+  PessoaLista,
   ProjetoGitLabItem,
   ProjetoResumo,
 } from './aplicacoes.tipos';
@@ -51,6 +54,11 @@ const ERROS_DE_CAMPO: Record<string, { campo: CampoDoForm; mensagem: string }> =
 const ERROS_GERAIS: Record<string, string> = {
   'projeto.dependencia-invalida':
     'Essa dependência não é válida: o projeto precisa ser da mesma aplicação, diferente dele mesmo e sem fechar ciclo.',
+  'politica.limite-negativo': 'O limite não pode ser negativo. Deixe em branco para não ter limite.',
+  'politica.abaixo-do-minimo':
+    'Isso fica abaixo do mínimo fixo: em qa, hml e produção o modo é bloqueia e Crítica e Alta ficam em 0. Só dá para endurecer.',
+  'papel.pessoa-desconhecida': 'Essa pessoa nunca entrou na Esteira: ela precisa fazer login uma vez antes de receber um papel.',
+  'papel.duplicado': 'Essa pessoa já tem esse papel.',
   'destino.configuracao-com-segredo':
     'A configuração do destino não pode ter segredo (chave com PASSWORD, SENHA, SECRET, TOKEN, KEY ou CREDENTIAL). Cadastre o segredo como variável do GitLab.',
 };
@@ -105,9 +113,13 @@ export class AplicacoesService {
   // projetos, ambientes e destinos
   private readonly grupo$ = signal<ProjetoGitLabItem[]>([]);
   private readonly erroProjetos$ = signal<string | null>(null);
+  private readonly erroPolitica$ = signal<string | null>(null);
+  private readonly erroPapeis$ = signal<string | null>(null);
   readonly projetosDoGrupo = this.grupo$.asReadonly();
   /** Último erro de negócio de uma ação direta (dependência, ambiente): some na próxima ação que der certo. */
   readonly erroDeProjetos = this.erroProjetos$.asReadonly();
+  readonly erroDePolitica = this.erroPolitica$.asReadonly();
+  readonly erroDePapeis = this.erroPapeis$.asReadonly();
 
   async carregarLista(pagina = 1): Promise<void> {
     this.paginaAtual.set(pagina);
@@ -166,6 +178,9 @@ export class AplicacoesService {
     this.inexistente.set(false);
     this.detalhe$.set(null);
     this.permissoes$.set(null);
+    this.erroProjetos$.set(null);
+    this.erroPolitica$.set(null);
+    this.erroPapeis$.set(null);
     try {
       const [detalhe, permissoes] = await Promise.all([this.api.obter(id), this.api.permissoes(id)]);
       this.detalhe$.set(detalhe);
@@ -191,6 +206,46 @@ export class AplicacoesService {
       return { ok: true };
     } catch (erro) {
       return resultadoDoErro(erro);
+    }
+  }
+
+  async alterarPolitica(aplicacaoId: string, ambiente: string, pedido: AlterarPoliticaRequest): Promise<ResultadoComando> {
+    try {
+      const salva = await this.api.alterarPolitica(aplicacaoId, ambiente, pedido);
+      this.detalhe$.update((d) => (d ? { ...d, politicas: (d.politicas ?? []).map((p) => (p.ambiente === ambiente ? salva : p)) } : d));
+      this.erroPolitica$.set(null);
+      return { ok: true };
+    } catch (erro) {
+      const resultado = resultadoDoErro(erro);
+      this.erroPolitica$.set(resultado.ok ? null : (resultado.mensagem ?? null));
+      return resultado;
+    }
+  }
+
+  buscarPessoas(texto: string): Promise<PessoaLista[]> {
+    return this.api.buscarPessoas(texto.trim());
+  }
+
+  async vincularPapel(aplicacaoId: string, usuario: string, papel: string): Promise<ResultadoComando> {
+    try {
+      const vinculo = await this.api.vincularPapel(aplicacaoId, { usuario, papel });
+      this.detalhe$.update((d) => (d ? { ...d, papeis: [...(d.papeis ?? []), vinculo] } : d));
+      this.erroPapeis$.set(null);
+      return { ok: true };
+    } catch (erro) {
+      const resultado = resultadoDoErro(erro);
+      this.erroPapeis$.set(resultado.ok ? null : (resultado.mensagem ?? null));
+      return resultado;
+    }
+  }
+
+  async desvincularPapel(aplicacaoId: string, papelId: string): Promise<void> {
+    try {
+      await this.api.desvincularPapel(aplicacaoId, papelId);
+      this.detalhe$.update((d) => (d ? { ...d, papeis: (d.papeis ?? []).filter((p: PapelResumo) => p.id !== papelId) } : d));
+      this.erroPapeis$.set(null);
+    } catch {
+      // o erro já virou toast no interceptor
     }
   }
 

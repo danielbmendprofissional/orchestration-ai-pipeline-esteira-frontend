@@ -4,8 +4,11 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmTabsImports } from '@spartan-ng/helm/tabs';
 import { AplicacaoGavetaComponent } from '../components/aplicacao-gaveta.component';
 import { AmbientesAbaComponent } from '../components/ambientes-aba.component';
+import { PessoasAbaComponent } from '../components/pessoas-aba.component';
+import { PoliticaAbaComponent } from '../components/politica-aba.component';
 import { ProjetosAbaComponent, type NovoProjeto } from '../components/projetos-aba.component';
 import { AplicacoesService, type FormDestino } from '../aplicacoes.service';
+import type { AlterarPoliticaRequest } from '../aplicacoes.tipos';
 
 const ABAS = [
   { id: 'cadastro', rotulo: 'Cadastro' },
@@ -18,7 +21,7 @@ const ABAS = [
 @Component({
   selector: 'est-aplicacao-detalhe-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent],
+  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent, PoliticaAbaComponent, PessoasAbaComponent],
   template: `
     @if (dominio.naoEncontrada()) {
       <h1 class="text-3xl font-semibold tracking-tight text-fg">Aplicação não encontrada</h1>
@@ -73,9 +76,26 @@ const ABAS = [
           />
         </div>
 
-        @for (t of abasEmConstrucao; track t.id) {
-          <div [hlmTabsContent]="t.id"><p class="mt-4 text-fg-muted">{{ t.rotulo }}: em construção.</p></div>
-        }
+        <div hlmTabsContent="politica">
+          <est-politica-aba
+            [politicas]="a.politicas ?? []"
+            [podeEditar]="dominio.permissoes()?.podeEditarPolitica ?? false"
+            [erro]="dominio.erroDePolitica()"
+            [salvar]="salvarPolitica"
+          />
+        </div>
+
+        <div hlmTabsContent="pessoas">
+          <est-pessoas-aba
+            [papeis]="a.papeis ?? []"
+            [podeGerenciar]="dominio.permissoes()?.podeGerenciarPapeis ?? false"
+            [erro]="dominio.erroDePapeis()"
+            [buscarPessoas]="buscarPessoas"
+            [vincular]="vincularPapel"
+            (marcar)="vincularPapel($event.usuario, $event.papel)"
+            (desvincular)="dominio.desvincularPapel(idDaAplicacao(), $event)"
+          />
+        </div>
       </hlm-tabs>
 
       <est-aplicacao-gaveta modo="editar" [aplicacao]="a" [(aberta)]="gavetaAberta" />
@@ -87,7 +107,6 @@ const ABAS = [
 export class AplicacaoDetalhePage {
   protected readonly dominio = inject(AplicacoesService);
   protected readonly abas = ABAS;
-  protected readonly abasEmConstrucao = ABAS.slice(3);
   protected readonly aba = signal<string>('cadastro');
   protected readonly gavetaAberta = signal(false);
   private readonly gaveta = viewChild(AplicacaoGavetaComponent);
@@ -101,6 +120,15 @@ export class AplicacaoDetalhePage {
   protected readonly cadastrarProjetos = (itens: NovoProjeto[]) => this.dominio.cadastrarProjetos(this.dominio.detalhe()?.id ?? '', itens);
   protected readonly salvarDestino = (projetoId: string, ambiente: string, destinoId: string | null, form: FormDestino) =>
     this.dominio.salvarDestino(projetoId, ambiente, destinoId, form);
+
+  protected readonly salvarPolitica = (ambiente: string, pedido: AlterarPoliticaRequest) =>
+    this.dominio.alterarPolitica(this.idDaAplicacao(), ambiente, pedido);
+  protected readonly buscarPessoas = (texto: string) => this.dominio.buscarPessoas(texto);
+  protected readonly vincularPapel = (usuario: string, papel: string) => this.dominio.vincularPapel(this.idDaAplicacao(), usuario, papel);
+
+  protected idDaAplicacao(): string {
+    return this.dominio.detalhe()?.id ?? '';
+  }
 
   protected carregarGrupo(): void {
     void this.dominio.carregarProjetosDoGrupo(this.dominio.detalhe()?.id ?? '');

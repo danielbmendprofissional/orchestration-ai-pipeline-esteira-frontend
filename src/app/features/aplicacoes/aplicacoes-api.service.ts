@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { cabecalhosDePaginacao, lerPagina, type Pagina, type PedidoDePagina } from '../../core/http/paginacao';
 import type {
   AlterarAplicacaoRequest,
+  AlterarPoliticaRequest,
   AplicacaoDetalhe,
   AplicacaoLista,
   CadastrarProjetoRequest,
@@ -11,10 +12,14 @@ import type {
   Destino,
   DestinoRequest,
   FiltroApi,
+  PapelResumo,
   PermissoesAplicacao,
   PermissoesGlobais,
+  PessoaLista,
+  Politica,
   ProjetoGitLabItem,
   ProjetoResumo,
+  VincularPapelRequest,
 } from './aplicacoes.tipos';
 
 const BASE = '/api/v1/aplicacoes';
@@ -84,5 +89,21 @@ export class AplicacoesApiService {
 
   async removerDestino(projetoId: string, ambiente: string, destinoId: string): Promise<void> {
     await firstValueFrom(this.http.delete<void>(`${PROJETOS}/${projetoId}/ambientes/${ambiente}/destinos/${destinoId}`));
+  }
+
+  alterarPolitica(id: string, ambiente: string, pedido: AlterarPoliticaRequest): Promise<Politica> {
+    return firstValueFrom(this.http.put<Politica>(`${BASE}/${id}/politicas/${ambiente}`, pedido));
+  }
+
+  buscarPessoas(busca: string): Promise<PessoaLista[]> {
+    return firstValueFrom(this.http.get<PessoaLista[]>('/api/v1/pessoas', { params: new HttpParams().set('busca', busca) }));
+  }
+
+  vincularPapel(id: string, pedido: VincularPapelRequest): Promise<PapelResumo> {
+    return firstValueFrom(this.http.post<PapelResumo>(`${BASE}/${id}/papeis`, pedido));
+  }
+
+  async desvincularPapel(id: string, papelId: string): Promise<void> {
+    await firstValueFrom(this.http.delete<void>(`${BASE}/${id}/papeis/${papelId}`));
   }
 }
