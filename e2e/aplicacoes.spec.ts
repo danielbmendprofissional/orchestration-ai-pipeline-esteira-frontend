@@ -19,7 +19,13 @@ const ambientes = (prefixo: string): Esquemas['AmbienteProjetoDto'][] =>
  * permissões, como a API faria pelo papel do usuário.
  */
 async function comCadastro(page: Page, pode: boolean) {
-  const aplicacao: Esquemas['AplicacaoDetalheDto'] = { id: ID, nome: 'Valuto', sigla: 'VLT', grupo: 'valuto', ativa: true, politicas: [], projetos: [], papeis: [] };
+  const aplicacao: Esquemas['AplicacaoDetalheDto'] = { id: ID, nome: 'Valuto', sigla: 'VLT', grupo: 'valuto', ativa: true, projetos: [], papeis: [],
+    politicas: [
+      { id: 'po1', ambiente: 'review', critica: null, alta: null, media: null, baixa: null, modo: 'avisa' },
+      ...['qa', 'hml', 'producao'].map((ambiente) => ({ id: 'po-' + ambiente, ambiente, critica: 0, alta: 0, media: null, baixa: null, modo: 'bloqueia' })),
+    ],
+  };
+  const pessoas: Esquemas['PessoaListaDto'][] = [{ sub: 's1', nome: 'Ana Souza', email: 'ana@esteira.local' }];
   const grupo: Esquemas['ProjetoGitLabItemDto'][] = [
     { projetoGitLabId: 1, caminho: 'valuto/api', nome: 'api', cadastrado: false, stackSugerida: 'dotnet' },
     { projetoGitLabId: 2, caminho: 'valuto/web', nome: 'web', cadastrado: false, stackSugerida: 'angular' },
@@ -44,11 +50,25 @@ async function comCadastro(page: Page, pode: boolean) {
       aplicacao.projetos!.push(novo);
       return json(rota, 201, novo);
     }
+    const politica = pathname.match(/\/politicas\/(\w+)$/);
+    if (politica && metodo === 'PUT') {
+      const atual = aplicacao.politicas!.find((x) => x.ambiente === politica[1])!;
+      Object.assign(atual, corpo);
+      return json(rota, 200, atual);
+    }
+    if (pathname === `/api/v1/aplicacoes/${ID}/papeis` && metodo === 'POST') {
+      const pessoa = pessoas.find((x) => x.sub === corpo?.['usuario'])!;
+      const vinculo = { id: 'v' + aplicacao.papeis!.length, usuario: pessoa.sub, nome: pessoa.nome, email: pessoa.email, papel: String(corpo?.['papel']) };
+      aplicacao.papeis!.push(vinculo);
+      return json(rota, 201, vinculo);
+    }
     if (pathname === `/api/v1/aplicacoes/${ID}`) return json(rota, 200, aplicacao);
     if (pathname === '/api/v1/aplicacoes')
       return json(rota, 200, lista(), { 'X-Total-Count': '1', 'X-Total-Pages': '1', 'X-Page': '1', 'X-Page-Size': '20' });
     return rota.fallback();
   });
+
+  await page.route('**/api/v1/pessoas**', (rota) => json(rota, 200, pessoas));
 
   await page.route('**/api/v1/projetos/**', async (rota) => {
     const req = rota.request();
@@ -115,10 +135,24 @@ test.describe('cadastro de Aplicação (A1)', () => {
     await expect(page.getByRole('button', { name: 'Editar destino cluster-b' })).toBeVisible();
     await semViolacoes(page);
 
-    for (const nome of ['Política de segurança', 'Pessoas e papéis']) {
-      await aba(page, nome).click();
-      await semViolacoes(page);
-    }
+    await aba(page, 'Política de segurança').click();
+    await page.getByLabel('Média em review').fill('5');
+    await page.getByRole('button', { name: 'Salvar review' }).click();
+    await expect(page.getByLabel('Média em review')).toHaveValue('5');
+    await expect(page.getByLabel('Crítica em qa')).toBeDisabled();
+    await semViolacoes(page);
+
+    await aba(page, 'Pessoas e papéis').click();
+    await page.getByRole('button', { name: 'Adicionar pessoa' }).click();
+    await page.getByLabel('Buscar pessoa').fill('ana');
+    await page.getByLabel('Buscar pessoa').press('Enter');
+    await page.getByRole('button', { name: /Ana Souza/ }).click();
+    await page.getByLabel('Papel').selectOption('aprovador-tecnico');
+    await semViolacoes(page);
+    await page.getByRole('button', { name: 'Vincular' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.getByLabel('Ana Souza: aprovador técnico')).toBeChecked();
+    await semViolacoes(page);
   });
 
   test('usuário sem permissão não vê Nova aplicação nem as ações de edição', { tag: '@A1' }, async ({ page }) => {
