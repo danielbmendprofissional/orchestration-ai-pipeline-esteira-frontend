@@ -6,8 +6,11 @@ import type {
   AplicacaoDetalhe,
   AplicacaoLista,
   ColunaOrdenavel,
+  Destino,
   FiltroApi,
   PermissoesAplicacao,
+  ProjetoGitLabItem,
+  ProjetoResumo,
 } from './aplicacoes.tipos';
 
 export const TAMANHO_DA_PAGINA = 20;
@@ -44,10 +47,25 @@ const ERROS_DE_CAMPO: Record<string, { campo: CampoDoForm; mensagem: string }> =
   },
 };
 
+/** Erros de negócio que não cabem num campo: a mensagem aparece junto da área que disparou a ação. */
+const ERROS_GERAIS: Record<string, string> = {
+  'projeto.dependencia-invalida':
+    'Essa dependência não é válida: o projeto precisa ser da mesma aplicação, diferente dele mesmo e sem fechar ciclo.',
+  'destino.configuracao-com-segredo':
+    'A configuração do destino não pode ter segredo (chave com PASSWORD, SENHA, SECRET, TOKEN, KEY ou CREDENTIAL). Cadastre o segredo como variável do GitLab.',
+};
+
 function resultadoDoErro(erro: unknown): ResultadoComando {
   const codigo = codigoDoErro(erro);
   const conhecido = codigo ? ERROS_DE_CAMPO[codigo] : undefined;
-  return conhecido ? { ok: false, ...conhecido } : { ok: false };
+  if (conhecido) return { ok: false, ...conhecido };
+  const geral = codigo ? ERROS_GERAIS[codigo] : undefined;
+  return geral ? { ok: false, mensagem: geral } : { ok: false };
+}
+
+export interface FormDestino {
+  nome: string;
+  configuracao: Record<string, string>;
 }
 
 /** Domínio de Aplicações (ADR-0005): orquestra a API e guarda o estado em signals. As permissões vêm da API. */
@@ -83,6 +101,13 @@ export class AplicacoesService {
   readonly permissoes = this.permissoes$.asReadonly();
   readonly naoEncontrada = this.inexistente.asReadonly();
   readonly carregandoDetalhe = this.carregandoDetalhe$.asReadonly();
+
+  // projetos, ambientes e destinos
+  private readonly grupo$ = signal<ProjetoGitLabItem[]>([]);
+  private readonly erroProjetos$ = signal<string | null>(null);
+  readonly projetosDoGrupo = this.grupo$.asReadonly();
+  /** Último erro de negócio de uma ação direta (dependência, ambiente): some na próxima ação que der certo. */
+  readonly erroDeProjetos = this.erroProjetos$.asReadonly();
 
   async carregarLista(pagina = 1): Promise<void> {
     this.paginaAtual.set(pagina);
@@ -167,6 +192,93 @@ export class AplicacoesService {
     } catch (erro) {
       return resultadoDoErro(erro);
     }
+  }
+
+  async carregarProjetosDoGrupo(aplicacaoId: string): Promise<void> {
+    try {
+      this.grupo$.set(await this.api.projetosDoGrupo(aplicacaoId));
+    } catch {
+      this.grupo$.set([]);
+    }
+  }
+
+  /** Cadastra um a um; o que já entrou fica no detalhe mesmo que um posterior falhe. */
+  async cadastrarProjetos(aplicacaoId: string, itens: { projetoGitLabId: number | string; stack: string }[]): Promise<ResultadoComando> {
+    for (const item of itens) {
+      try {
+        this.incluirProjeto(await this.api.cadastrarProjeto(aplicacaoId, { projetoGitLabId: item.projetoGitLabId, stack: item.stack.trim() }));
+      } catch (erro) {
+        return resultadoDoErro(erro);
+      }
+    }
+    return { ok: true };
+  }
+
+  async substituirDependencias(projetoId: string, dependeDe: string[]): Promise<ResultadoComando> {
+    return this.comandoDeProjeto(() => this.api.substituirDependencias(projetoId, dependeDe));
+  }
+
+  async alterarAmbiente(projetoId: string, ambiente: string, habilitado: boolean): Promise<ResultadoComando> {
+    return this.comandoDeProjeto(() => this.api.alterarAmbiente(projetoId, ambiente, habilitado));
+  }
+
+  /** `destinoId` ausente cria; presente altera. A ordem de um novo destino é a seguinte à maior do ambiente. */
+  async salvarDestino(projetoId: string, ambiente: string, destinoId: string | null, form: FormDestino): Promise<ResultadoComando> {
+    const existentes = this.destinosDe(projetoId, ambiente);
+    const ordem = destinoId ? (existentes.find((d) => d.id === destinoId)?.ordem ?? 1) : Math.max(0, ...existentes.map((d) => Number(d.ordem ?? 0))) + 1;
+    const pedido = { nome: form.nome.trim(), configuracao: form.configuracao, ordem: Number(ordem) };
+    try {
+      const salvo = destinoId
+        ? await this.api.alterarDestino(projetoId, ambiente, destinoId, pedido)
+        : await this.api.criarDestino(projetoId, ambiente, pedido);
+      this.trocarDestinos(projetoId, ambiente, (lista) => (destinoId ? lista.map((d) => (d.id === destinoId ? salvo : d)) : [...lista, salvo]));
+      return { ok: true };
+    } catch (erro) {
+      return resultadoDoErro(erro);
+    }
+  }
+
+  async removerDestino(projetoId: string, ambiente: string, destinoId: string): Promise<void> {
+    try {
+      await this.api.removerDestino(projetoId, ambiente, destinoId);
+      this.trocarDestinos(projetoId, ambiente, (lista) => lista.filter((d) => d.id !== destinoId));
+    } catch {
+      // o erro já virou toast no interceptor
+    }
+  }
+
+  private async comandoDeProjeto(chamar: () => Promise<ProjetoResumo>): Promise<ResultadoComando> {
+    try {
+      this.trocarProjeto(await chamar());
+      this.erroProjetos$.set(null);
+      return { ok: true };
+    } catch (erro) {
+      const resultado = resultadoDoErro(erro);
+      this.erroProjetos$.set(resultado.ok ? null : (resultado.mensagem ?? null));
+      return resultado;
+    }
+  }
+
+  private incluirProjeto(projeto: ProjetoResumo): void {
+    this.detalhe$.update((d) => (d ? { ...d, projetos: [...(d.projetos ?? []), projeto] } : d));
+  }
+
+  private trocarProjeto(projeto: ProjetoResumo): void {
+    this.detalhe$.update((d) => (d ? { ...d, projetos: (d.projetos ?? []).map((p) => (p.id === projeto.id ? projeto : p)) } : d));
+  }
+
+  private destinosDe(projetoId: string, ambiente: string): Destino[] {
+    const projeto = this.detalhe$()?.projetos?.find((p) => p.id === projetoId);
+    return projeto?.ambientes?.find((a) => a.ambiente === ambiente)?.destinos ?? [];
+  }
+
+  private trocarDestinos(projetoId: string, ambiente: string, f: (lista: Destino[]) => Destino[]): void {
+    const projeto = this.detalhe$()?.projetos?.find((p) => p.id === projetoId);
+    if (!projeto) return;
+    this.trocarProjeto({
+      ...projeto,
+      ambientes: (projeto.ambientes ?? []).map((a) => (a.ambiente === ambiente ? { ...a, destinos: f(a.destinos ?? []) } : a)),
+    });
   }
 
   private filtroDaApi(): FiltroApi {

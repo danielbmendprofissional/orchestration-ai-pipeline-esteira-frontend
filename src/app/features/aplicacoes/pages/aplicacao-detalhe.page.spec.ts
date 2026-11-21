@@ -79,7 +79,7 @@ describe('[A1] AplicacaoDetalhePage', () => {
   it('as abas ainda não implementadas mostram "em construção"', async () => {
     await montar(true);
 
-    const projetos = Array.from(raiz.querySelectorAll<HTMLElement>('[role=tab]')).find((t) => t.textContent?.includes('Projetos'))!;
+    const projetos = Array.from(raiz.querySelectorAll<HTMLElement>('[role=tab]')).find((t) => t.textContent?.includes('Política'))!;
     projetos.click();
     await estavel();
 

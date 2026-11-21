@@ -3,7 +3,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmTabsImports } from '@spartan-ng/helm/tabs';
 import { AplicacaoGavetaComponent } from '../components/aplicacao-gaveta.component';
-import { AplicacoesService } from '../aplicacoes.service';
+import { AmbientesAbaComponent } from '../components/ambientes-aba.component';
+import { ProjetosAbaComponent, type NovoProjeto } from '../components/projetos-aba.component';
+import { AplicacoesService, type FormDestino } from '../aplicacoes.service';
 
 const ABAS = [
   { id: 'cadastro', rotulo: 'Cadastro' },
@@ -16,7 +18,7 @@ const ABAS = [
 @Component({
   selector: 'est-aplicacao-detalhe-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent],
+  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent],
   template: `
     @if (dominio.naoEncontrada()) {
       <h1 class="text-3xl font-semibold tracking-tight text-fg">Aplicação não encontrada</h1>
@@ -48,6 +50,29 @@ const ABAS = [
           }
         </div>
 
+        <div hlmTabsContent="projetos">
+          <est-projetos-aba
+            [projetos]="a.projetos ?? []"
+            [podeEditar]="dominio.permissoes()?.podeEditar ?? false"
+            [grupo]="dominio.projetosDoGrupo()"
+            [erro]="dominio.erroDeProjetos()"
+            [cadastrar]="cadastrarProjetos"
+            (adicionar)="carregarGrupo()"
+            (alterarDependencias)="dominio.substituirDependencias($event.projetoId, $event.dependeDe)"
+          />
+        </div>
+
+        <div hlmTabsContent="ambientes">
+          <est-ambientes-aba
+            [projetos]="a.projetos ?? []"
+            [podeEditar]="dominio.permissoes()?.podeEditar ?? false"
+            [erro]="dominio.erroDeProjetos()"
+            [salvar]="salvarDestino"
+            (alterarAmbiente)="dominio.alterarAmbiente($event.projetoId, $event.ambiente, $event.habilitado)"
+            (remover)="dominio.removerDestino($event.projetoId, $event.ambiente, $event.destinoId)"
+          />
+        </div>
+
         @for (t of abasEmConstrucao; track t.id) {
           <div [hlmTabsContent]="t.id"><p class="mt-4 text-fg-muted">{{ t.rotulo }}: em construção.</p></div>
         }
@@ -62,7 +87,7 @@ const ABAS = [
 export class AplicacaoDetalhePage {
   protected readonly dominio = inject(AplicacoesService);
   protected readonly abas = ABAS;
-  protected readonly abasEmConstrucao = ABAS.slice(1);
+  protected readonly abasEmConstrucao = ABAS.slice(3);
   protected readonly aba = signal<string>('cadastro');
   protected readonly gavetaAberta = signal(false);
   private readonly gaveta = viewChild(AplicacaoGavetaComponent);
@@ -70,6 +95,15 @@ export class AplicacaoDetalhePage {
   constructor() {
     const rota = inject(ActivatedRoute).paramMap.subscribe((p) => void this.dominio.carregarDetalhe(p.get('id') ?? ''));
     inject(DestroyRef).onDestroy(() => rota.unsubscribe());
+  }
+
+  /** Funções (e não métodos) porque os componentes das abas, sem serviço, recebem a ação por `input`. */
+  protected readonly cadastrarProjetos = (itens: NovoProjeto[]) => this.dominio.cadastrarProjetos(this.dominio.detalhe()?.id ?? '', itens);
+  protected readonly salvarDestino = (projetoId: string, ambiente: string, destinoId: string | null, form: FormDestino) =>
+    this.dominio.salvarDestino(projetoId, ambiente, destinoId, form);
+
+  protected carregarGrupo(): void {
+    void this.dominio.carregarProjetosDoGrupo(this.dominio.detalhe()?.id ?? '');
   }
 
   protected editar(): void {

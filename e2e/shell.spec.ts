@@ -58,12 +58,12 @@ test.describe('sessão e shell', () => {
     await expect(menu).toContainText('mor');
   });
 
-  test('sem perfil o usuário abre /sem-acesso e vê só o Início no menu', { tag: '@F0.5' }, async ({ page }) => {
+  test('sem perfil o usuário abre /sem-acesso e vê no menu só o que não exige perfil', { tag: '@F0.5' }, async ({ page }) => {
     await comSessao(page, SEM_PAPEL);
     await page.goto('/sem-acesso');
 
     await expect(page.getByRole('heading', { level: 1, name: 'Sem acesso' })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Principal' }).getByRole('link')).toHaveCount(2); // marca + Início
+    await expect(page.getByRole('navigation', { name: 'Principal' }).getByRole('link')).toHaveCount(3); // marca + Início + Aplicações (o papel por Aplicação vem da API, não do `me`)
   });
 
   test('rota desconhecida mostra "não encontrado" dentro do shell', { tag: '@F0.5' }, async ({ page }) => {

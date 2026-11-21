@@ -10,6 +10,12 @@ export type PermissoesAplicacao = Esquemas['PermissoesAplicacao'];
 export type PermissoesGlobais = Esquemas['PermissoesGlobaisAplicacao'];
 export type CriarAplicacaoRequest = Esquemas['CriarAplicacaoRequest'];
 export type AlterarAplicacaoRequest = Esquemas['AlterarAplicacaoRequest'];
+export type ProjetoResumo = Esquemas['ProjetoResumoDto'];
+export type AmbienteProjeto = Esquemas['AmbienteProjetoDto'];
+export type Destino = Esquemas['DestinoDto'];
+export type DestinoRequest = Esquemas['DestinoRequest'];
+export type ProjetoGitLabItem = Esquemas['ProjetoGitLabItemDto'];
+export type CadastrarProjetoRequest = Esquemas['CadastrarProjetoRequest'];
 
 export type ColunaOrdenavel = 'nome' | 'sigla' | 'grupo' | 'quantidadeProjetos' | 'ativa';
 
