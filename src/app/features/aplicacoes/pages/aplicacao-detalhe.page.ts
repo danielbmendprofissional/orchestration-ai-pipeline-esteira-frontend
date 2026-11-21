@@ -1,0 +1,79 @@
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmTabsImports } from '@spartan-ng/helm/tabs';
+import { AplicacaoGavetaComponent } from '../components/aplicacao-gaveta.component';
+import { AplicacoesService } from '../aplicacoes.service';
+
+const ABAS = [
+  { id: 'cadastro', rotulo: 'Cadastro' },
+  { id: 'projetos', rotulo: 'Projetos' },
+  { id: 'ambientes', rotulo: 'Ambientes e destinos' },
+  { id: 'politica', rotulo: 'Política de segurança' },
+  { id: 'pessoas', rotulo: 'Pessoas e papéis' },
+] as const;
+
+@Component({
+  selector: 'est-aplicacao-detalhe-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent],
+  template: `
+    @if (dominio.naoEncontrada()) {
+      <h1 class="text-3xl font-semibold tracking-tight text-fg">Aplicação não encontrada</h1>
+      <p class="mt-2 text-fg-muted">Ela não existe ou você não tem acesso a ela.</p>
+      <a hlmBtn variant="outline" class="mt-4" routerLink="/aplicacoes">Voltar para Aplicações</a>
+    } @else if (dominio.detalhe(); as a) {
+      <a class="text-sm text-fg-muted underline-offset-4 hover:underline" routerLink="/aplicacoes">← Aplicações</a>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-fg">{{ a.nome }}</h1>
+      <p class="mt-1 text-fg-muted">{{ a.sigla }} · {{ a.grupo }} · {{ a.ativa ? 'Ativa' : 'Inativa' }}</p>
+
+      <hlm-tabs class="mt-6" [tab]="aba()" (tabActivated)="aba.set($event)">
+        <hlm-tabs-list variant="line" aria-label="Seções da aplicação">
+          @for (t of abas; track t.id) {
+            <button [hlmTabsTrigger]="t.id">{{ t.rotulo }}</button>
+          }
+        </hlm-tabs-list>
+
+        <div hlmTabsContent="cadastro">
+          <dl class="mt-4 grid max-w-md grid-cols-[8rem_1fr] gap-2">
+            <dt class="text-fg-muted">Nome</dt><dd>{{ a.nome }}</dd>
+            <dt class="text-fg-muted">Sigla</dt><dd>{{ a.sigla }}</dd>
+            <dt class="text-fg-muted">Situação</dt><dd>{{ a.ativa ? 'Ativa' : 'Inativa' }}</dd>
+            <dt class="text-fg-muted">Grupo do GitLab</dt><dd>{{ a.grupo }}</dd>
+          </dl>
+          @if (dominio.permissoes()?.podeEditarCadastro) {
+            <button hlmBtn class="mt-4" type="button" (click)="editar()">Editar aplicação</button>
+          } @else {
+            <p class="mt-4 text-sm text-fg-muted">Somente leitura.</p>
+          }
+        </div>
+
+        @for (t of abasEmConstrucao; track t.id) {
+          <div [hlmTabsContent]="t.id"><p class="mt-4 text-fg-muted">{{ t.rotulo }}: em construção.</p></div>
+        }
+      </hlm-tabs>
+
+      <est-aplicacao-gaveta modo="editar" [aplicacao]="a" [(aberta)]="gavetaAberta" />
+    } @else {
+      <p class="text-fg-muted" role="status">Carregando…</p>
+    }
+  `,
+})
+export class AplicacaoDetalhePage {
+  protected readonly dominio = inject(AplicacoesService);
+  protected readonly abas = ABAS;
+  protected readonly abasEmConstrucao = ABAS.slice(1);
+  protected readonly aba = signal<string>('cadastro');
+  protected readonly gavetaAberta = signal(false);
+  private readonly gaveta = viewChild(AplicacaoGavetaComponent);
+
+  constructor() {
+    const rota = inject(ActivatedRoute).paramMap.subscribe((p) => void this.dominio.carregarDetalhe(p.get('id') ?? ''));
+    inject(DestroyRef).onDestroy(() => rota.unsubscribe());
+  }
+
+  protected editar(): void {
+    this.gaveta()?.preparar();
+    this.gavetaAberta.set(true);
+  }
+}

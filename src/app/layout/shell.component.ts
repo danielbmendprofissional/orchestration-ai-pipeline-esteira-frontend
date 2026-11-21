@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
 import { AppConfigService } from '../core/config/app-config.service';
+import { FeatureFlagsService } from '../core/config/feature-flags.service';
 import { CabecalhoComponent } from './cabecalho.component';
 import { MenuLateralComponent } from './menu-lateral.component';
 import { itensDeMenu } from './menu';
@@ -42,9 +43,10 @@ import { itensDeMenu } from './menu';
 export class ShellComponent {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly flags = inject(FeatureFlagsService);
   protected readonly ambiente = inject(AppConfigService).config().ambiente;
 
-  protected readonly itens = computed(() => itensDeMenu(this.router.config, this.auth.usuario()?.perfis ?? []));
+  protected readonly itens = computed(() => itensDeMenu(this.router.config, this.auth.usuario()?.perfis ?? [], (codigo) => this.flags.isEnabled(codigo)));
 
   /** Âncora `#conteudo` sozinha mexeria na URL do roteador; aqui só o foco vai para o `main`. */
   protected irParaConteudo(evento: Event, conteudo: HTMLElement): void {

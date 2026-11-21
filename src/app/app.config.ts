@@ -3,7 +3,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideRouter } from '@angular/router';
 import { provideSpartanHlm } from '@spartan-ng/helm/utils';
 import { routes } from './app.routes';
-import { iniciarApp } from './core/boot';
+import { carregarFeatures, iniciarApp } from './core/boot';
 import { errorInterceptor } from './core/http/error.interceptor';
 import { sessaoInterceptor } from './core/http/sessao.interceptor';
 
@@ -14,6 +14,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([sessaoInterceptor, errorInterceptor])),
     // Config e sessão, nessa ordem, antes de qualquer rota (ver core/boot.ts).
     provideAppInitializer(iniciarApp),
+    // Flags em runtime (`/features.json`); ausente = desligado.
+    provideAppInitializer(carregarFeatures),
     provideRouter(routes),
     provideSpartanHlm(),
   ],

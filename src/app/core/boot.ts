@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { AppConfigService } from './config/app-config.service';
+import { FeatureFlagsService } from './config/feature-flags.service';
 
 /**
  * Boot do app, num inicializador só: inicializadores separados rodam em paralelo, e a ordem importa.
@@ -14,4 +15,12 @@ export async function iniciarApp(): Promise<void> {
 
   await config.carregar();
   await auth.carregar();
+}
+
+/**
+ * Flags (`/features.json`) num inicializador próprio: independem do `/config.json` e da sessão, e falha nunca
+ * derruba o boot (tudo desligado). O Angular espera todos os inicializadores antes da primeira navegação.
+ */
+export function carregarFeatures(): Promise<void> {
+  return inject(FeatureFlagsService).carregar();
 }

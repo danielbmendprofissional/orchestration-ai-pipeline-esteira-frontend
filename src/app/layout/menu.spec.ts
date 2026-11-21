@@ -74,3 +74,31 @@ describe('[F0.5] itensDeMenu', () => {
     expect(itensDeMenu(rotas, [])).toHaveLength(1);
   });
 });
+
+describe('[A1] itensDeMenu com feature flag', () => {
+  const rotas: Routes = [
+    { path: '', data: menu('Início') },
+    { path: 'aplicacoes', data: { ...menu('Aplicações'), feature: 'A1' } satisfies RotaData },
+  ];
+
+  it('esconde o item cuja feature está desligada', () => {
+    expect(itensDeMenu(rotas, ['mor'], () => false).map((i) => i.rotulo)).toEqual(['Início']);
+  });
+
+  it('mostra o item quando a feature está ligada', () => {
+    expect(itensDeMenu(rotas, ['mor'], (codigo) => codigo === 'A1').map((i) => i.rotulo)).toEqual(['Início', 'Aplicações']);
+  });
+
+  it('sem função de flags, rota com feature fica escondida (nunca ligada por omissão)', () => {
+    expect(itensDeMenu(rotas, ['mor']).map((i) => i.rotulo)).toEqual(['Início']);
+  });
+
+  it('esconde também os filhos de uma rota com feature desligada', () => {
+    const comFilho: Routes = [
+      { path: 'aplicacoes', data: { feature: 'A1' } satisfies RotaData, children: [{ path: 'x', data: menu('X') }] },
+    ];
+
+    expect(itensDeMenu(comFilho, [], () => false)).toEqual([]);
+    expect(itensDeMenu(comFilho, [], () => true).map((i) => i.caminho)).toEqual(['/aplicacoes/x']);
+  });
+});

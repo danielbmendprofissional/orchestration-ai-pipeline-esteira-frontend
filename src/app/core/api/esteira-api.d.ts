@@ -4,6 +4,962 @@
  */
 
 export interface paths {
+    "/api/v1/aplicacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    busca?: string;
+                    ativa?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AplicacaoListaDto"][];
+                        "application/json": components["schemas"]["AplicacaoListaDto"][];
+                        "text/json": components["schemas"]["AplicacaoListaDto"][];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["CriarAplicacaoRequest"];
+                    "application/json": components["schemas"]["CriarAplicacaoRequest"];
+                    "text/json": components["schemas"]["CriarAplicacaoRequest"];
+                    "application/*+json": components["schemas"]["CriarAplicacaoRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AplicacaoListaDto"];
+                        "application/json": components["schemas"]["AplicacaoListaDto"];
+                        "text/json": components["schemas"]["AplicacaoListaDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AplicacaoDetalheDto"];
+                        "application/json": components["schemas"]["AplicacaoDetalheDto"];
+                        "text/json": components["schemas"]["AplicacaoDetalheDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["AlterarAplicacaoRequest"];
+                    "application/json": components["schemas"]["AlterarAplicacaoRequest"];
+                    "text/json": components["schemas"]["AlterarAplicacaoRequest"];
+                    "application/*+json": components["schemas"]["AlterarAplicacaoRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AplicacaoListaDto"];
+                        "application/json": components["schemas"]["AplicacaoListaDto"];
+                        "text/json": components["schemas"]["AplicacaoListaDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/gitlab/projetos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProjetoGitLabItemDto"][];
+                        "application/json": components["schemas"]["ProjetoGitLabItemDto"][];
+                        "text/json": components["schemas"]["ProjetoGitLabItemDto"][];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/projetos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["CadastrarProjetoRequest"];
+                    "application/json": components["schemas"]["CadastrarProjetoRequest"];
+                    "text/json": components["schemas"]["CadastrarProjetoRequest"];
+                    "application/*+json": components["schemas"]["CadastrarProjetoRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProjetoResumoDto"];
+                        "application/json": components["schemas"]["ProjetoResumoDto"];
+                        "text/json": components["schemas"]["ProjetoResumoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/papeis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PapelResumoDto"][];
+                        "application/json": components["schemas"]["PapelResumoDto"][];
+                        "text/json": components["schemas"]["PapelResumoDto"][];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["VincularPapelRequest"];
+                    "application/json": components["schemas"]["VincularPapelRequest"];
+                    "text/json": components["schemas"]["VincularPapelRequest"];
+                    "application/*+json": components["schemas"]["VincularPapelRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PapelResumoDto"];
+                        "application/json": components["schemas"]["PapelResumoDto"];
+                        "text/json": components["schemas"]["PapelResumoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/papeis/{papelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    papelId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/politicas/{ambiente}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    ambiente: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["AlterarPoliticaRequest"];
+                    "application/json": components["schemas"]["AlterarPoliticaRequest"];
+                    "text/json": components["schemas"]["AlterarPoliticaRequest"];
+                    "application/*+json": components["schemas"]["AlterarPoliticaRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PoliticaDto"];
+                        "application/json": components["schemas"]["PoliticaDto"];
+                        "text/json": components["schemas"]["PoliticaDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/permissoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PermissoesGlobaisAplicacao"];
+                        "application/json": components["schemas"]["PermissoesGlobaisAplicacao"];
+                        "text/json": components["schemas"]["PermissoesGlobaisAplicacao"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/permissoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PermissoesAplicacao"];
+                        "application/json": components["schemas"]["PermissoesAplicacao"];
+                        "text/json": components["schemas"]["PermissoesAplicacao"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -164,6 +1120,630 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pessoas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    busca?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PessoaListaDto"][];
+                        "application/json": components["schemas"]["PessoaListaDto"][];
+                        "text/json": components["schemas"]["PessoaListaDto"][];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projetos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["AlterarProjetoRequest"];
+                    "application/json": components["schemas"]["AlterarProjetoRequest"];
+                    "text/json": components["schemas"]["AlterarProjetoRequest"];
+                    "application/*+json": components["schemas"]["AlterarProjetoRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProjetoResumoDto"];
+                        "application/json": components["schemas"]["ProjetoResumoDto"];
+                        "text/json": components["schemas"]["ProjetoResumoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projetos/{id}/dependencias": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["DependenciasRequest"];
+                    "application/json": components["schemas"]["DependenciasRequest"];
+                    "text/json": components["schemas"]["DependenciasRequest"];
+                    "application/*+json": components["schemas"]["DependenciasRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProjetoResumoDto"];
+                        "application/json": components["schemas"]["ProjetoResumoDto"];
+                        "text/json": components["schemas"]["ProjetoResumoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projetos/{id}/ambientes/{ambiente}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    ambiente: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["AlterarAmbienteRequest"];
+                    "application/json": components["schemas"]["AlterarAmbienteRequest"];
+                    "text/json": components["schemas"]["AlterarAmbienteRequest"];
+                    "application/*+json": components["schemas"]["AlterarAmbienteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProjetoResumoDto"];
+                        "application/json": components["schemas"]["ProjetoResumoDto"];
+                        "text/json": components["schemas"]["ProjetoResumoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projetos/{id}/ambientes/{ambiente}/destinos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    ambiente: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["DestinoRequest"];
+                    "application/json": components["schemas"]["DestinoRequest"];
+                    "text/json": components["schemas"]["DestinoRequest"];
+                    "application/*+json": components["schemas"]["DestinoRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["DestinoDto"];
+                        "application/json": components["schemas"]["DestinoDto"];
+                        "text/json": components["schemas"]["DestinoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projetos/{id}/ambientes/{ambiente}/destinos/{destinoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    ambiente: string;
+                    destinoId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["DestinoRequest"];
+                    "application/json": components["schemas"]["DestinoRequest"];
+                    "text/json": components["schemas"]["DestinoRequest"];
+                    "application/*+json": components["schemas"]["DestinoRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["DestinoDto"];
+                        "application/json": components["schemas"]["DestinoDto"];
+                        "text/json": components["schemas"]["DestinoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    ambiente: string;
+                    destinoId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/usuarios/me": {
         parameters: {
             query?: never;
@@ -216,10 +1796,154 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AlterarAmbienteRequest: {
+            habilitado: null | boolean;
+        };
+        AlterarAplicacaoRequest: {
+            nome: null | string;
+            sigla: null | string;
+            ativa: null | boolean;
+        };
+        AlterarPoliticaRequest: {
+            /** Format: int32 */
+            critica: null | number | string;
+            /** Format: int32 */
+            alta: null | number | string;
+            /** Format: int32 */
+            media: null | number | string;
+            /** Format: int32 */
+            baixa: null | number | string;
+            modo: null | string;
+        };
+        AlterarProjetoRequest: {
+            stack: null | string;
+            ativo: null | boolean;
+        };
+        AmbienteProjetoDto: {
+            /** Format: uuid */
+            id?: string;
+            ambiente?: string;
+            habilitado?: boolean;
+            destinos?: components["schemas"]["DestinoDto"][];
+        };
+        AplicacaoDetalheDto: {
+            /** Format: uuid */
+            id?: string;
+            nome?: string;
+            sigla?: string;
+            grupo?: string;
+            ativa?: boolean;
+            politicas?: components["schemas"]["PoliticaDto"][];
+            projetos?: components["schemas"]["ProjetoResumoDto"][];
+            papeis?: components["schemas"]["PapelResumoDto"][];
+        };
+        AplicacaoListaDto: {
+            /** Format: uuid */
+            id?: string;
+            nome?: string;
+            sigla?: string;
+            grupo?: string;
+            /** Format: int32 */
+            quantidadeProjetos?: number | string;
+            ativa?: boolean;
+        };
+        CadastrarProjetoRequest: {
+            /** Format: int64 */
+            projetoGitLabId: null | number | string;
+            stack: null | string;
+        };
+        CriarAplicacaoRequest: {
+            nome: null | string;
+            sigla: null | string;
+            grupoGitLab: null | string;
+        };
+        DependenciasRequest: {
+            dependeDe: null | string[];
+        };
+        DestinoDto: {
+            /** Format: uuid */
+            id?: string;
+            nome?: string;
+            configuracao?: {
+                [key: string]: string;
+            };
+            /** Format: int32 */
+            ordem?: number | string;
+        };
+        DestinoRequest: {
+            nome: null | string;
+            configuracao: null | {
+                [key: string]: string;
+            };
+            /** Format: int32 */
+            ordem: null | number | string;
+        };
         ErroNaResposta: {
             code: string;
             message: string;
             type: string;
+        };
+        PapelResumoDto: {
+            /** Format: uuid */
+            id?: string;
+            usuario?: string;
+            nome?: null | string;
+            email?: null | string;
+            papel?: string;
+        };
+        PermissoesAplicacao: {
+            podeEditar: boolean;
+            podeEditarCadastro: boolean;
+            podeEditarPolitica: boolean;
+            podeGerenciarPapeis: boolean;
+        };
+        PermissoesGlobaisAplicacao: {
+            podeCriar: boolean;
+        };
+        PessoaListaDto: {
+            sub?: string;
+            nome?: string;
+            email?: string;
+        };
+        PoliticaDto: {
+            /** Format: uuid */
+            id?: string;
+            ambiente?: string;
+            /** Format: int32 */
+            critica?: null | number | string;
+            /** Format: int32 */
+            alta?: null | number | string;
+            /** Format: int32 */
+            media?: null | number | string;
+            /** Format: int32 */
+            baixa?: null | number | string;
+            modo?: string;
+        };
+        ProblemDetails: {
+            type?: null | string;
+            title?: null | string;
+            /** Format: int32 */
+            status?: null | number | string;
+            detail?: null | string;
+            instance?: null | string;
+        };
+        ProjetoGitLabItemDto: {
+            /** Format: int64 */
+            projetoGitLabId?: number | string;
+            caminho?: string;
+            nome?: string;
+            cadastrado?: boolean;
+            stackSugerida?: null | string;
+        };
+        ProjetoResumoDto: {
+            /** Format: uuid */
+            id?: string;
+            nome?: string;
+            caminho?: string;
+            stack?: string;
+            ativo?: boolean;
+            ambientes?: components["schemas"]["AmbienteProjetoDto"][];
+            dependeDe?: string[];
         };
         RespostaDeErro: {
             errors: components["schemas"]["ErroNaResposta"][];
@@ -229,6 +1953,10 @@ export interface components {
             nome: string;
             email: string;
             perfis: string[];
+        };
+        VincularPapelRequest: {
+            usuario: null | string;
+            papel: null | string;
         };
     };
     responses: never;

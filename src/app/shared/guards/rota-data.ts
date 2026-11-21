@@ -7,6 +7,8 @@ export interface RotaData {
   menu?: { rotulo: string; icone: string };
   /** Perfis (de `realm_access.roles`, via `/usuarios/me`) que podem abrir a rota; ausente ou vazio = qualquer usuário logado. */
   perfis?: string[];
+  /** Código da Fatia (`A1`): com o flag `Features:<código>` desligado a rota não existe e o item some do menu. */
+  feature?: string;
 }
 
 /** Regra única de perfis, usada pelo `perfilGuard` e pelo menu: sem exigência libera; com exigência, vale ter um deles. */
