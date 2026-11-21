@@ -62,6 +62,8 @@ module.exports = defineConfig([
     rules: {
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['est', 'hlm'], style: 'camelCase' }],
       '@angular-eslint/component-selector': ['error', { type: 'element', prefix: ['est', 'hlm'], style: 'kebab-case' }],
+      // O helm gerado expõe `class` como alias de input (ex.: `userClass`); é a API da biblioteca.
+      '@angular-eslint/no-input-rename': 'off',
     },
   },
   {
