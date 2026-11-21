@@ -5,6 +5,8 @@ const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
 module.exports = defineConfig([
+  // Gerado por `npm run generate:api-types` e nunca editado à mão: o estilo é o do gerador.
+  { ignores: ['src/app/core/api/*.d.ts'] },
   {
     files: ['**/*.ts'],
     extends: [
@@ -29,6 +31,27 @@ module.exports = defineConfig([
           type: 'element',
           prefix: 'est',
           style: 'kebab-case',
+        },
+      ],
+      // F0.5, critério 9: nenhum token, cookie ou dado de sessão no navegador (BFF, ADR-0004).
+      'no-restricted-globals': [
+        'error',
+        ...['localStorage', 'sessionStorage', 'indexedDB'].map((name) => ({
+          name,
+          message: 'Nada de sessão no navegador: o BFF guarda tudo no servidor (ADR-0004).',
+        })),
+      ],
+      'no-restricted-properties': [
+        'error',
+        ...['localStorage', 'sessionStorage', 'indexedDB'].map((property) => ({
+          object: 'window',
+          property,
+          message: 'Nada de sessão no navegador: o BFF guarda tudo no servidor (ADR-0004).',
+        })),
+        {
+          object: 'document',
+          property: 'cookie',
+          message: 'O cookie esteira_session é HttpOnly; o front nunca lê nem escreve cookie (ADR-0004).',
         },
       ],
     },
