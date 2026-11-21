@@ -47,6 +47,15 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "preview": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/auth/auth-api.service.ts",
+                  "with": "src/app/core/auth/auth-api.service.preview.ts"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"

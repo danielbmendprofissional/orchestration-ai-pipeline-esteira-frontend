@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HlmBadge } from '@spartan-ng/helm/badge';
-import { AppConfigService } from './core/config/app-config.service';
+import { HlmToaster } from '@spartan-ng/helm/sonner';
 
-// Casca provisória do bootstrap (F0): o layout de verdade nasce na F0.5, depois do design (D0).
+/** Só hospeda as rotas (o shell mora na rota raiz) e o toaster dos avisos de erro. */
 @Component({
   selector: 'est-root',
-  imports: [RouterOutlet, HlmBadge],
+  imports: [RouterOutlet, HlmToaster],
   templateUrl: './app.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {
-  protected readonly ambiente = inject(AppConfigService).config().ambiente;
-}
+export class App {}

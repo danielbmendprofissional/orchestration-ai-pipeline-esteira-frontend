@@ -1,26 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { App } from './app';
-import { AppConfigService } from './core/config/app-config.service';
 
-describe('[F0] App', () => {
+// A casca provisória da F0 (h1 "Esteira" + selo do ambiente) foi substituída pelo shell da F0.5:
+// o que ela mostrava agora é testado em layout/shell.component.spec.ts.
+describe('[F0.5] App', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-      providers: [{ provide: AppConfigService, useValue: { config: () => ({ ambiente: 'HML' }) } }],
-    }).compileComponents();
+    await TestBed.configureTestingModule({ imports: [App], providers: [provideRouter([])] }).compileComponents();
   });
 
-  it('mostra o nome da plataforma', async () => {
+  it('só hospeda as rotas e o toaster dos avisos', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
+    const raiz = fixture.nativeElement as HTMLElement;
 
-    expect((fixture.nativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Esteira');
-  });
-
-  it('mostra o ambiente lido do /config.json', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('HML');
+    expect(raiz.querySelector('router-outlet')).not.toBeNull();
+    expect(raiz.querySelector('hlm-toaster')).not.toBeNull();
   });
 });
