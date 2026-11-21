@@ -30,8 +30,15 @@ export class AuthService {
     }
   }
 
-  /** Login é navegação de página inteira: o Keycloak devolve para o `returnUrl` depois do callback. */
+  private navegandoParaOLogin = false;
+
+  /**
+   * Login é navegação de página inteira: o Keycloak devolve para o `returnUrl` depois do callback.
+   * Uma vez só: várias requisições podem receber 401 ao mesmo tempo e a página já está de saída.
+   */
   entrar(returnUrl: string = this.navegador.caminhoAtual()): void {
+    if (this.navegandoParaOLogin) return;
+    this.navegandoParaOLogin = true;
     this.navegador.irPara(`/api/v1/auth/login?returnUrl=${encodeURIComponent(returnUrlSeguro(returnUrl))}`);
   }
 

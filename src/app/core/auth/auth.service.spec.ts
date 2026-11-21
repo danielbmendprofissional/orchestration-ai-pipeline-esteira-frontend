@@ -62,6 +62,14 @@ describe('[F0.5] AuthService', () => {
     expect(irPara).toHaveBeenCalledWith('/api/v1/auth/login?returnUrl=' + encodeURIComponent('/'));
   });
 
+  it('navega ao login uma vez só, mesmo com várias requisições recebendo 401 ao mesmo tempo', () => {
+    servico.entrar();
+    servico.entrar();
+    servico.entrar();
+
+    expect(irPara).toHaveBeenCalledTimes(1);
+  });
+
   it('propaga a falha do boot que não é 401 (a casca não sobe com sessão desconhecida)', async () => {
     const boot = servico.carregar();
     http.expectOne('/api/v1/usuarios/me').flush('', { status: 500, statusText: 'Server Error' });
