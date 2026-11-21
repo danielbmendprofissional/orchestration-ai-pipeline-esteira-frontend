@@ -21,15 +21,10 @@ import { ICONES_DO_SHELL } from './icones';
         hlmBtn
         variant="ghost"
         class="gap-2 px-2"
-        [attr.aria-label]="'Menu do usuário: ' + usuario().nome"
         [hlmDropdownMenuTrigger]="menu"
       >
-        <span
-          class="bg-surface-3 text-fg-2 grid size-7 place-items-center rounded-full text-2xs font-semibold"
-          aria-hidden="true"
-          >{{ iniciais() }}</span
-        >
-        <span class="hidden max-w-48 truncate md:inline" aria-hidden="true">{{ usuario().nome }}</span>
+        <ng-icon name="lucideCircleUser" size="18" aria-hidden="true" />
+        <span class="sr-only max-w-48 truncate md:not-sr-only">{{ usuario().nome }}</span>
         <ng-icon name="lucideChevronDown" size="14" aria-hidden="true" />
       </button>
     </header>
@@ -54,13 +49,6 @@ export class CabecalhoComponent {
   readonly ambiente = input.required<string>();
   readonly usuario = input.required<UsuarioLogado>();
   readonly sair = output<void>();
-
-  protected readonly iniciais = computed(() => {
-    const partes = this.usuario().nome.trim().split(/\s+/).filter(Boolean);
-    const primeira = partes[0]?.[0] ?? '?';
-    const ultima = partes.length > 1 ? (partes.at(-1)?.[0] ?? '') : '';
-    return (primeira + ultima).toUpperCase();
-  });
 
   protected readonly perfis = computed(() => this.usuario().perfis.join(', ') || 'sem perfil');
 }

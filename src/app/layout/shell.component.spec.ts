@@ -88,7 +88,7 @@ describe('[F0.5] ShellComponent', () => {
   it('o menu do usuário mostra e-mail e perfis e o Sair navega ao logout', async () => {
     const { fixture, raiz } = await montar(dev);
 
-    raiz.querySelector<HTMLButtonElement>('header button[aria-label^="Menu do usuário"]')!.click();
+    raiz.querySelector<HTMLButtonElement>('header [data-slot="dropdown-menu-trigger"]')!.click();
     await fixture.whenStable();
 
     const aberto = document.body.querySelector('[data-slot="dropdown-menu"]')!;

@@ -1,23 +1,19 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideSpartanHlm } from '@spartan-ng/helm/utils';
 import { routes } from './app.routes';
-import { AuthService } from './core/auth/auth.service';
-import { AppConfigService } from './core/config/app-config.service';
+import { iniciarApp } from './core/boot';
 import { errorInterceptor } from './core/http/error.interceptor';
 import { sessaoInterceptor } from './core/http/sessao.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // sessaoInterceptor por fora, errorInterceptor por dentro: o 401 passa pela sessão antes do toast.
     provideHttpClient(withFetch(), withInterceptors([sessaoInterceptor, errorInterceptor])),
-    // Sequencial de propósito (inicializadores separados rodam em paralelo): o /config.json vem antes de
-    // qualquer outro serviço (ADR-0006; sem ele o app não sobe) e só então o `me` da sessão (ADR-0004).
-    provideAppInitializer(async () => {
-      await inject(AppConfigService).carregar();
-      await inject(AuthService).carregar();
-    }),
+    // Config e sessão, nessa ordem, antes de qualquer rota (ver core/boot.ts).
+    provideAppInitializer(iniciarApp),
     provideRouter(routes),
     provideSpartanHlm(),
   ],
