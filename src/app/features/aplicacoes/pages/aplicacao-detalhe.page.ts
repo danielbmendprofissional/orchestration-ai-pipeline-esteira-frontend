@@ -8,7 +8,9 @@ import { PessoasAbaComponent } from '../components/pessoas-aba.component';
 import { PoliticaAbaComponent } from '../components/politica-aba.component';
 import { ProjetosAbaComponent, type NovoProjeto } from '../components/projetos-aba.component';
 import { AplicacoesService, type FormDestino } from '../aplicacoes.service';
-import type { AlterarPoliticaRequest } from '../aplicacoes.tipos';
+import type { AlterarPoliticaRequest, ProjetoGitLabItem } from '../aplicacoes.tipos';
+import { FeatureFlagsService } from '../../../core/config/feature-flags.service';
+import { WorkspaceCampoComponent } from '../components/workspace-campo.component';
 
 const ABAS = [
   { id: 'cadastro', rotulo: 'Cadastro' },
@@ -21,7 +23,7 @@ const ABAS = [
 @Component({
   selector: 'est-aplicacao-detalhe-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent, PoliticaAbaComponent, PessoasAbaComponent],
+  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent, PoliticaAbaComponent, PessoasAbaComponent, WorkspaceCampoComponent],
   template: `
     @if (dominio.naoEncontrada()) {
       <h1 class="text-3xl font-semibold tracking-tight text-fg">Aplicação não encontrada</h1>
@@ -50,6 +52,16 @@ const ABAS = [
             <button hlmBtn class="mt-4" type="button" (click)="editar()">Editar aplicação</button>
           } @else {
             <p class="mt-4 text-sm text-fg-muted">Somente leitura.</p>
+          }
+          @if (flags.isEnabled('P1')) {
+            <est-workspace-campo
+              [workspace]="a.workspace"
+              [podeEditar]="dominio.permissoes()?.podeEditarCadastro ?? false"
+              [grupo]="dominio.projetosDoGrupo()"
+              [erro]="dominio.erroDoWorkspace()"
+              [definir]="definirWorkspace"
+              (carregar)="carregarGrupo()"
+            />
           }
         </div>
 
@@ -106,6 +118,9 @@ const ABAS = [
 })
 export class AplicacaoDetalhePage {
   protected readonly dominio = inject(AplicacoesService);
+  protected readonly flags = inject(FeatureFlagsService);
+  protected readonly definirWorkspace = (projeto: ProjetoGitLabItem | null) =>
+    this.dominio.definirWorkspace(this.dominio.detalhe()?.id ?? '', projeto);
   protected readonly abas = ABAS;
   protected readonly aba = signal<string>('cadastro');
   protected readonly gavetaAberta = signal(false);

@@ -76,6 +76,7 @@ export class AplicacoesApiService {
   private readonly projetos: ProjetoResumo[] = [novoProjeto('p-api', 'valuto/api', 'dotnet'), novoProjeto('p-web', 'valuto/web', 'angular')];
   private readonly politicas: Politica[] = POLITICAS_INICIAIS();
   private papeis: PapelResumo[] = [{ id: 'pp-1', usuario: 'ana', nome: 'Ana Souza', email: 'ana@esteira.local', papel: 'analista' }];
+  private workspace: AplicacaoDetalhe['workspace'] = undefined;
   private contador = 0;
 
   listar(filtro: FiltroApi, pedido: PedidoDePagina): Promise<Pagina<AplicacaoLista>> {
@@ -105,7 +106,7 @@ export class AplicacoesApiService {
   obter(id: string): Promise<AplicacaoDetalhe> {
     const a = this.dados.find((x) => x.id === id);
     if (!a) return Promise.reject(new Error('Aplicação do preview não encontrada.'));
-    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, politicas: structuredClone(this.politicas), projetos: this.projetos.map((p) => structuredClone(p)), papeis: structuredClone(this.papeis) });
+    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, ...(this.workspace ? { workspace: { ...this.workspace } } : {}), politicas: structuredClone(this.politicas), projetos: this.projetos.map((p) => structuredClone(p)), papeis: structuredClone(this.papeis) });
   }
 
   criar(pedido: CriarAplicacaoRequest): Promise<AplicacaoLista> {
@@ -132,6 +133,13 @@ export class AplicacoesApiService {
     void id;
     const cadastrados = new Set(this.projetos.map((p) => p.caminho));
     return Promise.resolve(GRUPO.map((g) => ({ ...g, cadastrado: cadastrados.has(g.caminho ?? '') })));
+  }
+
+  definirWorkspace(id: string, projetoGitLabId: number | string | null): Promise<void> {
+    void id;
+    const item = GRUPO.find((g) => g.projetoGitLabId === Number(projetoGitLabId));
+    this.workspace = projetoGitLabId === null || !item ? undefined : { projetoGitLabId: item.projetoGitLabId, caminho: item.caminho };
+    return Promise.resolve();
   }
 
   cadastrarProjeto(_id: string, pedido: CadastrarProjetoRequest): Promise<ProjetoResumo> {
