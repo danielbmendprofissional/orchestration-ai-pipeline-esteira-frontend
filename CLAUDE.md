@@ -1,6 +1,6 @@
 # esteira-frontend
 
-Frontend Angular da Esteira. Vocabulário do domínio: `../CONTEXT-MAP.md` (Aplicação, Entrega, Fluxo, Candidata, Ambiente, Deploy, Análise, Achado…) — nomes de feature, componente e rota usam esses termos, em pt-BR. Decisões: `../docs/adr/` — stack e arquitetura na **ADR-0005**, componentes na **ADR-0015**, config em runtime na **ADR-0006**, sessão na **ADR-0004**, tempo real na **ADR-0011**. Convenção de código Angular: skill `angular-developer`. Design: **`DESIGN.md`** (fonte de verdade; tokens em `src/styles.css`), `PRODUCT.md`, protótipos em `../docs/design/prototipos/` e regras em `../docs/design/`.
+Frontend Angular da Esteira. Vocabulário do domínio: `../CONTEXT-MAP.md` (Aplicação, Fatia, Entrega, Fluxo, Artefato, Ambiente, Deploy, Análise, Achado…) — nomes de feature, componente e rota usam esses termos, em pt-BR. Decisões: `../docs/adr/` — stack e arquitetura na **ADR-0005**, componentes na **ADR-0015**, config em runtime na **ADR-0006**, sessão na **ADR-0004**, tempo real na **ADR-0011**. Convenção de código Angular: skill `angular-developer`. Design: **`DESIGN.md`** (fonte de verdade; tokens em `src/styles.css`), `PRODUCT.md`, protótipos em `../docs/design/prototipos/` e regras em `../docs/design/`.
 
 ## Stack
 
