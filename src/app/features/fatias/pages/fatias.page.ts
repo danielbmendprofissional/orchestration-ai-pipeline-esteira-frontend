@@ -44,7 +44,7 @@ const MAXIMO_RECENTES = 5;
     <h1 class="text-2xl font-semibold tracking-tight text-fg md:text-3xl">Painel de Fatias</h1>
 
     <div class="mt-4">
-      <est-fatias-avisos [avisos]="dominio.avisos()" />
+      <est-fatias-avisos [avisos]="dominio.avisos()" [carregando]="dominio.carregando()" (tentarDeNovo)="dominio.carregar()" />
     </div>
 
     <div class="mt-4 flex flex-wrap items-center gap-2" role="search" aria-label="Filtros do Painel">

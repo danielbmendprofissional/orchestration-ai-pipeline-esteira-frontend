@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideTriangleAlert } from '@ng-icons/lucide';
 import { RouterLink } from '@angular/router';
@@ -25,6 +25,15 @@ import type { AvisoDoPainel } from '../fatias.tipos';
             @if (a.codigo === 'painel.sem-workspace') {
               <a class="text-brand-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-fg" [routerLink]="['/aplicacoes', a.aplicacaoId]">Cadastrar workspace</a>
             }
+            @if (a.codigo === 'gitlab.indisponivel' || a.codigo === 'painel.indisponivel') {
+              <button
+                type="button"
+                class="inline-flex h-7 items-center rounded-md border border-line-strong bg-surface-2 px-2.5 text-2xs font-semibold text-fg shadow-edge hover:bg-surface-3 focus-visible:border-brand-hover focus-visible:shadow-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45"
+                [disabled]="carregando()"
+                [attr.aria-label]="'Tentar de novo: ' + a.aplicacao"
+                (click)="tentarDeNovo.emit()"
+              >Tentar de novo</button>
+            }
           </li>
         }
       </ul>
@@ -33,4 +42,8 @@ import type { AvisoDoPainel } from '../fatias.tipos';
 })
 export class FatiasAvisosComponent {
   readonly avisos = input.required<AvisoDoPainel[]>();
+  /** Consulta em curso: o "Tentar de novo" fica desabilitado. */
+  readonly carregando = input(false);
+  /** "Tentar de novo" nos avisos de GitLab/Painel indisponível: só relê a lista (a página decide como). */
+  readonly tentarDeNovo = output<void>();
 }

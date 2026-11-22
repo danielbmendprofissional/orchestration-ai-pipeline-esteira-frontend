@@ -3,7 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
 import { horaDosDados } from '../fatias.apresentacao';
 
-/** "Atualizar" + frescor ("dados de HH:MM"). A região aria-live anuncia atualização em curso, dado antigo e o limite de 60 s. */
+/** "Atualizar" + frescor ("dados de HH:MM"). A região aria-live anuncia atualização em curso, dado antigo e o limite de atualização (10 s). */
 @Component({
   selector: 'est-atualizar-fatias',
   changeDetection: ChangeDetectionStrategy.OnPush,

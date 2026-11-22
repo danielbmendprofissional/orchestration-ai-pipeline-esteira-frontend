@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import type { AvisoDoPainel } from '../fatias.tipos';
 import { FatiasAvisosComponent } from './fatias-avisos.component';
@@ -8,10 +8,13 @@ const aviso = (codigo: string, extra: Partial<AvisoDoPainel> = {}): AvisoDoPaine
 });
 
 describe('[P1] FatiasAvisosComponent', () => {
-  function montar(avisos: AvisoDoPainel[]) {
+  let fixtureAtual: ComponentFixture<FatiasAvisosComponent>;
+  function montar(avisos: AvisoDoPainel[], carregando = false) {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(FatiasAvisosComponent);
+    fixtureAtual = fixture;
     fixture.componentRef.setInput('avisos', avisos);
+    fixture.componentRef.setInput('carregando', carregando);
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   }
@@ -37,6 +40,25 @@ describe('[P1] FatiasAvisosComponent', () => {
     expect(avisos[0].textContent).toContain('mensagem gitlab.bot-nao-configurado');
     expect(avisos[1].textContent).toContain('Portal');
     expect(raiz.querySelector('a')).toBeNull();
+  });
+
+  describe('[P1] Tentar de novo (critério 15)', () => {
+    const botoes = (raiz: HTMLElement) => Array.from(raiz.querySelectorAll<HTMLButtonElement>('button'));
+
+    it('só gitlab.indisponivel e painel.indisponivel oferecem o botão, e ele emite', () => {
+      const raiz = montar([aviso('gitlab.indisponivel'), aviso('painel.indisponivel'), aviso('gitlab.bot-nao-configurado'), aviso('painel.sem-workspace')]);
+      expect(botoes(raiz)).toHaveLength(2);
+      expect(botoes(raiz).every((b) => b.textContent!.includes('Tentar de novo'))).toBe(true);
+      let emitidos = 0;
+      fixtureAtual.componentInstance.tentarDeNovo.subscribe(() => emitidos++);
+      botoes(raiz)[0].click();
+      expect(emitidos).toBe(1);
+    });
+
+    it('fica desabilitado enquanto carrega', () => {
+      const raiz = montar([aviso('gitlab.indisponivel')], true);
+      expect(botoes(raiz)[0].disabled).toBe(true);
+    });
   });
 
   it('mensagem com marcação é texto (critério 17)', () => {

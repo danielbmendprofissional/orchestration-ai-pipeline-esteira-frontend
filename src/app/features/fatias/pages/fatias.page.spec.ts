@@ -214,6 +214,17 @@ describe('[P1] FatiasPage', () => {
     });
   });
 
+  describe('[P1] Tentar de novo no aviso de GitLab fora', () => {
+    it('recarrega a lista (só leitura, sem atualizar)', async () => {
+      await montar(lista({ avisos: [{ aplicacaoId: 'a4', aplicacao: 'Cobrança', codigo: 'gitlab.indisponivel', mensagem: 'GitLab fora.' }] }));
+      const antes = api.listar.mock.calls.length;
+      raiz.querySelector<HTMLButtonElement>('[data-testid="aviso"] button')!.click();
+      await estavel();
+      expect(api.listar.mock.calls.length).toBe(antes + 1);
+      expect(api.atualizar).not.toHaveBeenCalled();
+    });
+  });
+
   describe('estados', () => {
     it('carregando: mostra o estado de carga e não o vazio', async () => {
       await montar();
