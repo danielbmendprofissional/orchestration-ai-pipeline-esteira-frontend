@@ -176,7 +176,7 @@ Grafite quase preto com um único azul de ação e uma família de status empres
 - **Title** (600, 15 px): título de bloco e de gaveta (19 px na gaveta).
 - **Body** (400, 14 px, 1.45): texto da interface; 13 px em linhas de lista e tabela.
 - **Label** (600, 12 px): pílulas, cabeçalho de tabela, rótulos de campo.
-- **Code** (400, 12,5 px, mono): versões (`v4.0.0-rc2`), hashes, caminhos, regras, IDs (`#ENT-0042`, `SEC-2291`).
+- **Code** (400, 12,5 px, mono): versões (`v3.8.0`), hashes, caminhos, regras, IDs (`E-12`, `V9`, `SEC-2291`).
 
 ### Named Rules
 **The Mono Means Machine Rule.** Tudo o que é identificador de máquina (versão, hash, caminho, regra, chave de configuração, ID) vai em mono; tudo o que é linguagem de gente vai em Mona Sans.
@@ -188,7 +188,7 @@ Menu lateral fixo de 240 px à esquerda e conteúdo à direita, limitado a 1680 
 Ritmo: blocos separados por 18 px, conteúdo de bloco com 18 × 20 px de respiro, linhas de lista com 10 a 14 px na vertical e 20 px nas laterais. Formulários de uma coluna dentro da gaveta, com 16 px entre campos.
 
 Padrões de página:
-- **Lista:** título, linha de filtros (busca, seleção, chips com contagem), lista enxuta, paginação com "1–8 de N".
+- **Lista:** título, linha de filtros (busca, seletor de Aplicação com busca, chips com contagem), lista enxuta, paginação com "1–8 de N" (janela de páginas, ver Componentes).
 - **Detalhe:** cabeçalho com estado, metadados em linha, blocos; abas logo abaixo do cabeçalho do bloco.
 - **Ações:** fora do bloco, no canto inferior direito; Reprovar/Cancelar à esquerda da ação principal.
 
@@ -245,7 +245,19 @@ Linha clicável inteira com ícone de estado, título (600), linha de contexto e
 Painel de até 540 px vindo da direita, sobre véu escuro, com fechar no canto, título de 19 px e ações no rodapé alinhadas à direita. É onde se edita cadastro e se vê o detalhe de um registro; fecha com Esc.
 
 ### Mapa de etapas (signature)
-Cartões de etapa em grade sobre fundo pontilhado, ligados por um trilho por projeto (azul para o primeiro, Prata para o segundo). Cartão concluído com borda e selo verdes, executando em âmbar, falhou em vermelho, anulado tracejado. A etapa atual leva a etiqueta "você está aqui".
+Cartões de etapa em grade sobre fundo pontilhado, com **uma faixa por Fluxo** (um Projeto cada), ligadas por um trilho (azul para o primeiro, Prata para o segundo). Cinco colunas: **Abertura** e **Liberação** ocupam as duas faixas (são da Entrega); **QA, HML e PRD** são de cada Fluxo. Estados da etapa, sempre ícone + texto: Concluído (borda e selo verdes), Executando e Aguardando aprovação (âmbar; o cartão diz de quem é a vez), Bloqueada e Falhou (vermelho), Pulada, Superado e Cancelado (tracejado). O estado da Entrega fica no título, um só: o mais urgente. A etapa atual leva a etiqueta "você está aqui".
+
+### Badge de estado da Fatia (signature)
+Pílula pequena com ícone e texto curto, sem barra de progresso: o progresso é texto na linha ("3 de 5 tasks", "CI verde, aguardando você"). Cor só com significado: **neutro** (Planejada, Com spec, Excluída riscada, Liberada com ícone de confirmado em cinza claro, sem verde), **azul** (Em execução, Em revisão, Em Entrega: o que anda) e **âmbar** (Pronta para Entrega e Aguardando liberação: esperam uma ação sua; depois do prazo de 30 dias o tempo fica em âmbar forte, sem bloquear nada). Fatia sem flag leva o selo de cadeado "sem flag" e a caixa de seleção travada.
+
+### Seletor com busca (signature)
+Para escolher entre muitas opções (a lista de Aplicações chega a 50): botão que mostra a escolha ("Todas as aplicações", "Valuto", "Valuto +2") e abre um popover com campo de busca, grupo **Recentes**, itens com caixa de seleção e contagem, no máximo 8 por vez e a dica "digite para refinar". Nunca um `select` com a lista inteira.
+
+### Paginação com janela
+Anterior e próxima, página atual em azul e uma janela `1 2 … 5 6 7 … 59 60`, mais "Ir para" a página e "Por página" (5, 8, 10, 20, 50, 100). A seleção feita numa página continua marcada nas outras.
+
+### Gaveta de decisão e de Liberação
+Mesma gaveta lateral, com o corpo rolável e um rodapé de ações fixo: Reprovar ou Excluir à esquerda, a ação principal à direita. A Liberação mostra as Notas de entrega em texto de produto, as Fatias com caixa por Fatia e os links do GitLab (issue, MR, commit; só o que ainda existe), a ordem API e depois front, e o **Liberar selecionadas**. **Abaixo de 760 px a gaveta vira folha embaixo da tela**, com cantos de 16 px, botões de 52 px lado a lado e o motivo da autoaprovação quando o MOR abriu a Entrega. O e-mail leva por link a essa folha, nunca aprova sozinho.
 
 ## Do's and Don'ts
 
@@ -256,6 +268,8 @@ Cartões de etapa em grade sobre fundo pontilhado, ligados por um trilho por pro
 - **Do** mande avisos para o sino do topo e históricos para a Auditoria (link "ver na auditoria", já filtrado).
 - **Do** pagine listas e mantenha cada linha curta; detalhe no hover ou na gaveta.
 - **Do** escreva versões, hashes, caminhos e IDs em Geist Mono.
+- **Do** mostre a versão de uma Entrega como **prevista**: o número definitivo só nasce na confirmação em produção.
+- **Do** deixe a evidência na frente de quem decide, inclusive na folha do celular.
 
 ### Don't:
 - **Don't** comunique estado só por cor.
@@ -264,3 +278,5 @@ Cartões de etapa em grade sobre fundo pontilhado, ligados por um trilho por pro
 - **Don't** use verde × vermelho como par de séries em gráfico.
 - **Don't** use o tema de fábrica do spartan nem classe de fábrica do Tailwind sem token por trás.
 - **Don't** abra campos de edição dentro de tabela de leitura; edição de cadastro é na gaveta.
+- **Don't** use "candidata", "rc", "DEV" nem "AET" em tela: são do modelo antigo (ADR-0021 a 0025).
+- **Don't** aprove nada direto pelo e-mail: ele só leva à tela de decisão.
