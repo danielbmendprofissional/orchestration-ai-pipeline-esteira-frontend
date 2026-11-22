@@ -2,7 +2,7 @@ import { FatiasApiService as Real } from './fatias-api.service';
 import { FatiasApiService as Preview } from './fatias-api.service.preview';
 
 // O angular.json troca o arquivo no build `preview`; o TypeScript não vê a troca, então este teste segura a superfície.
-describe('P1 · FatiasApiService do preview', () => {
+describe('[P1] FatiasApiService do preview', () => {
   const publicos = (tipo: { prototype: object }) =>
     Object.getOwnPropertyNames(tipo.prototype)
       .filter((nome) => nome !== 'constructor')

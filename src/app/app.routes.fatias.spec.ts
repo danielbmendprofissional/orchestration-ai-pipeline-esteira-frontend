@@ -7,7 +7,7 @@ import { routes } from './app.routes';
 
 const filhasDoShell = (routes[0].children ?? []) as Route[];
 
-describe('P1 · rota do Painel de Fatias', () => {
+describe('[P1] rota do Painel de Fatias', () => {
   const rota = filhasDoShell.find((r) => r.path === 'fatias');
 
   it('declara /fatias atrás do flag P1, com item de menu "Painel de Fatias"', () => {

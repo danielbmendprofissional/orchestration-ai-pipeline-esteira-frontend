@@ -19,7 +19,7 @@ const lista = (parcial: Partial<PainelLista> = {}): PainelLista => ({
 const erroDaApi = (code: string, status: number) =>
   new HttpErrorResponse({ status, error: { errors: [{ code, message: 'msg', type: 'Validation' }] } });
 
-describe('P1 · FatiasService', () => {
+describe('[P1] FatiasService', () => {
   let api: Record<'listar' | 'atualizar' | 'gaveta' | 'hotfixes', ReturnType<typeof vi.fn>>;
   let servico: FatiasService;
 

@@ -5,7 +5,7 @@ import { FatiasApiService } from './fatias-api.service';
 
 const corpoVazio = { itens: [], pagina: 1, tamanhoPagina: 20, total: 0, totalPaginas: 0, avisos: [], aplicacoes: [], desatualizado: false };
 
-describe('P1 · FatiasApiService', () => {
+describe('[P1] FatiasApiService', () => {
   let api: FatiasApiService;
   let http: HttpTestingController;
 
