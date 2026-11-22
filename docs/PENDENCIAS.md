@@ -18,7 +18,7 @@ Formato: `docs/agents/pendencias.md` do workspace (uma linha `- [ ]` por pendên
 
 ## Da A1 — cadastro de Aplicação (2026-11-21)
 
-- [ ] **`features.json` em qa, hml e produção:** o build de produção sai com `{}` (tudo desligado); `{"A1": true}` vive em `src/dev/features.json` e só entra na configuração `development`. Em qa, hml e produção quem manda é o ConfigMap do Ambiente (`APP_FEATURES_JSON`): conferir no template-ci que o nginx o serve por cima do arquivo da imagem.
+- [ ] **Flags da Esteira ligados por padrão (ADR-0026):** `public/features.json` traz `{"A1": true}` e a API traz `Features:A1 = true` no `appsettings.json`. O ConfigMap/variável do Ambiente ainda pode desligar (`APP_FEATURES_JSON`, `Features__A1=false`); conferir no template-ci que o nginx serve o ConfigMap por cima do arquivo da imagem.
 - [ ] **Validação do grupo ao sair do campo:** a spec pede mostrar o grupo encontrado ao sair do campo, mas a API não tem rota de consulta de grupo sem criar. Hoje o erro (`gitlab.grupo-nao-encontrado`, `aplicacao.grupo-ja-vinculado`) aparece ao criar. Pedir à API uma consulta de grupo, ou aceitar o comportamento atual.
 - [ ] **Smoke manual contra a API real:** os testes e o E2E usam a API simulada; o smoke com GitLab real espera o token do bot (`docs/mudancas-infra.md`, item 2). Rodar com `dev` (MOR) e `dev-sem-papel`.
 - [ ] **Menu "Aplicações" aparece pra qualquer pessoa logada:** o papel por Aplicação não vem no `me`, só da API (a lista vem vazia e o detalhe dá 404 sem papel). Aceitável; reavaliar se a Esteira ganhar um perfil global de "sem nenhuma aplicação".
