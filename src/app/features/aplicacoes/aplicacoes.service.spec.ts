@@ -76,6 +76,42 @@ describe('[A1] AplicacoesService', () => {
       expect(api.listar).toHaveBeenLastCalledWith(expect.objectContaining({ sort: 'sigla', order: 'asc' }), expect.anything());
     });
 
+    it('as permissões carregam mesmo quando a lista falha (o botão Nova aplicação não depende da lista)', async () => {
+      api.listar.mockRejectedValue(new HttpErrorResponse({ status: 500 }));
+
+      await servico.carregarLista();
+
+      expect(servico.podeCriar()).toBe(true);
+    });
+
+    it('404 da lista (área não disponível) não é falha: marca indisponível', async () => {
+      api.listar.mockRejectedValue(new HttpErrorResponse({ status: 404 }));
+
+      await servico.carregarLista();
+
+      expect(servico.indisponivel()).toBe(true);
+      expect(servico.falhouAoCarregar()).toBe(false);
+    });
+
+    it('lista vazia com 200 não é indisponível nem falha', async () => {
+      api.listar.mockResolvedValue(pagina([]));
+
+      await servico.carregarLista();
+
+      expect(servico.indisponivel()).toBe(false);
+      expect(servico.falhouAoCarregar()).toBe(false);
+    });
+
+    it('comFiltro: só com busca ou situação diferente de Ativas', async () => {
+      expect(servico.comFiltro()).toBe(false);
+      await servico.filtrarPorSituacao('todas');
+      expect(servico.comFiltro()).toBe(true);
+      await servico.filtrarPorSituacao('ativas');
+      expect(servico.comFiltro()).toBe(false);
+      await servico.buscar('port');
+      expect(servico.comFiltro()).toBe(true);
+    });
+
     it('guarda a falha da carga sem lançar e libera o carregando', async () => {
       api.listar.mockRejectedValue(new HttpErrorResponse({ status: 500 }));
 

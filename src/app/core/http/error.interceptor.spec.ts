@@ -37,6 +37,13 @@ describe('[F0.5] errorInterceptor', () => {
     return resultado;
   };
 
+  it('404 sem errors[] (rota que não existe, flag desligado) não vira toast: a page trata como "não disponível"', async () => {
+    const propagado = await falhar('', 404);
+
+    expect(erro).not.toHaveBeenCalled();
+    expect(propagado).toBeInstanceOf(HttpErrorResponse);
+  });
+
   it('mostra o message de cada erro de errors[] e deixa o code disponível para a page', async () => {
     const corpo = {
       errors: [

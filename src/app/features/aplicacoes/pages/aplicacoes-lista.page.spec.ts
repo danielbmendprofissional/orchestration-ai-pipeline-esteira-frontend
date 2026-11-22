@@ -73,10 +73,39 @@ describe('[A1] AplicacoesListaPage', () => {
     expect(botao(/Nova aplicação/, raiz)).toBeUndefined();
   });
 
-  it('sem Aplicações mostra o estado vazio', async () => {
+  it('sem nenhuma Aplicação cadastrada, avisa que ainda não há e orienta quem pode criar', async () => {
+    await montar(true, []);
+
+    expect(raiz.textContent).toContain('Nenhuma aplicação cadastrada ainda');
+    expect(raiz.textContent).toContain('Nova aplicação');
+    expect(raiz.querySelector('[role=alert]')).toBeNull();
+  });
+
+  it('sem Aplicações e sem permissão de criar, só avisa que não há', async () => {
     await montar(false, []);
 
+    expect(raiz.textContent).toContain('Nenhuma aplicação cadastrada ainda');
+    expect(raiz.textContent).not.toContain('Crie a primeira');
+  });
+
+  it('com filtro ativo e nada encontrado, diz que não há com esses filtros', async () => {
+    await montar(true, []);
+
+    botao('Todas', raiz)!.click();
+    await estavel();
+
     expect(raiz.textContent).toContain('Nenhuma aplicação com esses filtros');
+  });
+
+  it('área indisponível (404): mostra aviso calmo, sem alerta de erro, e o botão continua pelas permissões', async () => {
+    await montar(true);
+    api.listar.mockRejectedValue(new HttpErrorResponse({ status: 404 }));
+    botao('Todas', raiz)!.click();
+    await estavel();
+
+    expect(raiz.textContent).toContain('ainda não está disponível');
+    expect(raiz.querySelector('[role=alert]')).toBeNull();
+    expect(botao('Nova aplicação', raiz)).toBeDefined();
   });
 
   it('o filtro Inativas pede ativa=false à API, e Todas pede sem filtro', async () => {

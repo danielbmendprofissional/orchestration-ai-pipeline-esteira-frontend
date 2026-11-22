@@ -49,7 +49,9 @@ const SITUACOES: { valor: Situacao; rotulo: string }[] = [
       />
     </div>
 
-    @if (dominio.falhouAoCarregar()) {
+    @if (dominio.indisponivel()) {
+      <p class="mt-6 text-fg-muted" role="status">Esta área ainda não está disponível neste ambiente.</p>
+    } @else if (dominio.falhouAoCarregar()) {
       <p class="mt-6 text-destructive" role="alert">Não foi possível carregar as aplicações.</p>
     } @else {
       <div hlmTableContainer class="mt-4">
@@ -78,7 +80,13 @@ const SITUACOES: { valor: Situacao; rotulo: string }[] = [
       </div>
 
       @if (!dominio.carregando() && (dominio.pagina()?.itens?.length ?? 0) === 0) {
-        <p class="mt-6 text-fg-muted">Nenhuma aplicação com esses filtros.</p>
+        @if (dominio.comFiltro()) {
+          <p class="mt-6 text-fg-muted">Nenhuma aplicação com esses filtros.</p>
+        } @else {
+          <p class="mt-6 text-fg-muted">
+            Nenhuma aplicação cadastrada ainda.@if (dominio.podeCriar()) { Crie a primeira em "Nova aplicação". }
+          </p>
+        }
       }
 
       @if ((dominio.pagina()?.totalPaginas ?? 1) > 1) {

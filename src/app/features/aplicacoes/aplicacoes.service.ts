@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { codigoDoErro } from '../../core/http/erro-api';
 import type { Pagina } from '../../core/http/paginacao';
 import { AplicacoesApiService } from './aplicacoes-api.service';
@@ -90,6 +91,7 @@ export class AplicacoesService {
   private readonly emCarga = signal(false);
   private readonly falhou = signal(false);
   private readonly criar$ = signal(false);
+  private readonly indisponivel$ = signal(false);
 
   readonly pagina = this.lida.asReadonly();
   readonly carregando = this.emCarga.asReadonly();
@@ -98,6 +100,10 @@ export class AplicacoesService {
   readonly busca = this.textoDeBusca.asReadonly();
   readonly ordenacao = this.ordem.asReadonly();
   readonly podeCriar = this.criar$.asReadonly();
+  /** A API respondeu 404 à lista: a área não existe neste ambiente. Não é erro de quem usa, nem lista vazia. */
+  readonly indisponivel = this.indisponivel$.asReadonly();
+  /** Busca ou situação diferente de Ativas: o vazio, aí, é "nada com esses filtros". */
+  readonly comFiltro = computed(() => this.textoDeBusca() !== '' || this.situacao() !== 'ativas');
 
   // detalhe
   private readonly detalhe$ = signal<AplicacaoDetalhe | null>(null);
@@ -125,16 +131,19 @@ export class AplicacoesService {
     this.paginaAtual.set(pagina);
     this.emCarga.set(true);
     this.falhou.set(false);
+    this.indisponivel$.set(false);
+    // As permissões não dependem da lista: se ela falhar, a pessoa ainda vê o que pode fazer.
+    const permissoes = this.api
+      .permissoesGlobais()
+      .then((globais) => this.criar$.set(globais.podeCriar))
+      .catch(() => undefined);
     try {
-      const [lida, globais] = await Promise.all([
-        this.api.listar(this.filtroDaApi(), { pagina, tamanho: TAMANHO_DA_PAGINA }),
-        this.api.permissoesGlobais(),
-      ]);
-      this.lida.set(lida);
-      this.criar$.set(globais.podeCriar);
-    } catch {
-      this.falhou.set(true);
+      this.lida.set(await this.api.listar(this.filtroDaApi(), { pagina, tamanho: TAMANHO_DA_PAGINA }));
+    } catch (erro) {
+      if (erro instanceof HttpErrorResponse && erro.status === 404) this.indisponivel$.set(true);
+      else this.falhou.set(true);
     } finally {
+      await permissoes;
       this.emCarga.set(false);
     }
   }
