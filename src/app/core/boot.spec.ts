@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth/auth.service';
-import { iniciarApp } from './boot';
+import { carregarFeatures, iniciarApp } from './boot';
 import { AppConfigService } from './config/app-config.service';
+import { FeatureFlagsService } from './config/feature-flags.service';
 
 describe('[F0.5] iniciarApp (boot)', () => {
   let ordem: string[];
@@ -40,5 +41,16 @@ describe('[F0.5] iniciarApp (boot)', () => {
 
     await expect(TestBed.runInInjectionContext(() => iniciarApp())).rejects.toThrow('sem /config.json');
     expect(ordem).toEqual([]);
+  });
+});
+
+describe('[A1] carregarFeatures (boot)', () => {
+  it('carrega o /features.json pelo FeatureFlagsService', async () => {
+    const carregar = vi.fn(async () => undefined);
+    TestBed.configureTestingModule({ providers: [{ provide: FeatureFlagsService, useValue: { carregar } }] });
+
+    await TestBed.runInInjectionContext(() => carregarFeatures());
+
+    expect(carregar).toHaveBeenCalledOnce();
   });
 });

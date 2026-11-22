@@ -13,6 +13,7 @@ export const MENSAGEM_GENERICA = 'Algo deu errado. Tente de novo.';
  *   para a page, que lê o `code` com `codigoDoErro`.
  * - Problem Details (500), falha de rede ou corpo sem a forma esperada (HTML do proxy): mensagem genérica;
  *   só o `traceId` vai ao console. Nunca stacktrace nem detalhe técnico na tela.
+ * - 404 sem `errors[]`: sem toast; o erro segue para a page.
  * - 401: fica com o `sessaoInterceptor` (renovação ou login). Este interceptor é o mais interno da lista
  *   justamente para ver a resposta antes dele e ignorar o 401; o erro de um refresh que falhou aparece uma
  *   vez só, quando o próprio refresh responde.
@@ -25,6 +26,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (!(erro instanceof HttpErrorResponse) || erro.status === 401 || !ehDaApi(req.url)) return throwError(() => erro);
 
       const erros = errosDaResposta(erro);
+      // 404 sem errors[] é rota que não existe neste ambiente (ex.: flag desligado), não falha de quem usa:
+      // a page decide o que mostrar.
+      if (erro.status === 404 && erros.length === 0) return throwError(() => erro);
       if (erros.length > 0) {
         erros.forEach((e) => notificador.erro(e.message));
       } else {

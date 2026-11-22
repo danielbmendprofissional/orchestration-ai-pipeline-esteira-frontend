@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth.guard';
+import { featureGuard } from './shared/guards/feature.guard';
 import type { RotaData } from './shared/guards/rota-data';
 
 /**
@@ -20,6 +21,26 @@ export const routes: Routes = [
         title: 'Início — Esteira',
         data: { menu: { rotulo: 'Início', icone: 'lucideHouse' } } satisfies RotaData,
         loadComponent: () => import('./features/inicio/pages/inicio.page').then((m) => m.InicioPage),
+      },
+      {
+        // Atrás do flag Features:A1: desligado, a rota nem casa e a URL cai no Não encontrado.
+        path: 'aplicacoes',
+        canMatch: [featureGuard],
+        data: { menu: { rotulo: 'Aplicações', icone: 'lucideLayers' }, feature: 'A1' } satisfies RotaData,
+        children: [
+          {
+            path: '',
+            title: 'Aplicações — Esteira',
+            loadComponent: () =>
+              import('./features/aplicacoes/pages/aplicacoes-lista.page').then((m) => m.AplicacoesListaPage),
+          },
+          {
+            path: ':id',
+            title: 'Aplicação — Esteira',
+            loadComponent: () =>
+              import('./features/aplicacoes/pages/aplicacao-detalhe.page').then((m) => m.AplicacaoDetalhePage),
+          },
+        ],
       },
       {
         path: 'sem-acesso',
