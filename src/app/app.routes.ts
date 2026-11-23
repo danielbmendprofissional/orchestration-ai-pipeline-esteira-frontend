@@ -47,7 +47,7 @@ export const routes: Routes = [
         path: 'fatias',
         canMatch: [featureGuard],
         title: 'Painel de Fatias — Esteira',
-        data: { menu: { rotulo: 'Painel de Fatias', icone: 'lucideListChecks' }, feature: 'P1' } satisfies RotaData,
+        data: { menu: { rotulo: 'Painel de Fatias', icone: 'lucideListChecks' }, feature: 'P1', featureAcoes: 'P2' } satisfies RotaData,
         loadComponent: () => import('./features/fatias/pages/fatias.page').then((m) => m.FatiasPage),
       },
       {

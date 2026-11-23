@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { cabecalhosDePaginacao } from '../../core/http/paginacao';
-import type { FiltroFatias, Gaveta, Hotfixes, PainelLista, PedidoDePagina } from './fatias.tipos';
+import type { AcoesPedidas, FiltroFatias, Gaveta, Hotfixes, PainelLista, PedidoDePagina } from './fatias.tipos';
 
 const FATIAS = '/api/v1/fatias';
 const APLICACOES = '/api/v1/aplicacoes';
@@ -30,6 +30,23 @@ export class FatiasApiService {
 
   gaveta(aplicacaoId: string, codigo: string): Promise<Gaveta> {
     return firstValueFrom(this.http.get<Gaveta>(`${APLICACOES}/${aplicacaoId}/fatias/${encodeURIComponent(codigo)}`));
+  }
+
+  /** Decisões da P2 (202 + ações pedidas): a Esteira só registra; quem executa no GitLab é a P2b. */
+  abrirReview(aplicacaoId: string, codigo: string): Promise<AcoesPedidas> {
+    return this.decidir(aplicacaoId, codigo, 'review', null);
+  }
+
+  aprovar(aplicacaoId: string, codigo: string): Promise<AcoesPedidas> {
+    return this.decidir(aplicacaoId, codigo, 'aprovar', null);
+  }
+
+  reprovar(aplicacaoId: string, codigo: string, comentario: string): Promise<AcoesPedidas> {
+    return this.decidir(aplicacaoId, codigo, 'reprovar', { comentario });
+  }
+
+  private decidir(aplicacaoId: string, codigo: string, rota: string, corpo: { comentario: string } | null): Promise<AcoesPedidas> {
+    return firstValueFrom(this.http.post<AcoesPedidas>(`${APLICACOES}/${aplicacaoId}/fatias/${encodeURIComponent(codigo)}/${rota}`, corpo));
   }
 
   hotfixes(aplicacaoId: string): Promise<Hotfixes> {

@@ -1494,6 +1494,309 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/aplicacoes/{id}/fatias/{codigo}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    codigo: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AcoesPedidasDto"];
+                        "application/json": components["schemas"]["AcoesPedidasDto"];
+                        "text/json": components["schemas"]["AcoesPedidasDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/fatias/{codigo}/aprovar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    codigo: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AcoesPedidasDto"];
+                        "application/json": components["schemas"]["AcoesPedidasDto"];
+                        "text/json": components["schemas"]["AcoesPedidasDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/aplicacoes/{id}/fatias/{codigo}/reprovar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    codigo: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json-patch+json": null | components["schemas"]["ReprovarFatiaRequest"];
+                    "application/json": null | components["schemas"]["ReprovarFatiaRequest"];
+                    "text/json": null | components["schemas"]["ReprovarFatiaRequest"];
+                    "application/*+json": null | components["schemas"]["ReprovarFatiaRequest"];
+                };
+            };
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AcoesPedidasDto"];
+                        "application/json": components["schemas"]["AcoesPedidasDto"];
+                        "text/json": components["schemas"]["AcoesPedidasDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pessoas": {
         parameters: {
             query?: never;
@@ -2170,6 +2473,39 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AcaoDaFatiaDto: {
+            /** Format: uuid */
+            id: string;
+            tipo: string;
+            estado: string;
+            repositorio: null | string;
+            /** Format: int64 */
+            mrIid: number | string;
+            pedidaPor: null | string;
+            /** Format: date-time */
+            pedidaEm: string;
+            /** Format: date-time */
+            atualizadaEm: string;
+            codigoErro: null | string;
+            comentario: null | string;
+        };
+        AcaoPedidaDto: {
+            /** Format: uuid */
+            id: string;
+            tipo: string;
+            estado: string;
+            repositorio: string;
+            /** Format: int64 */
+            mrIid: number | string;
+        };
+        AcoesDaFatiaDto: {
+            podeAbrirReview: components["schemas"]["PermissaoDaAcaoDto"];
+            podeAprovar: components["schemas"]["PermissaoDaAcaoDto"];
+            podeReprovar: components["schemas"]["PermissaoDaAcaoDto"];
+        };
+        AcoesPedidasDto: {
+            acoes: components["schemas"]["AcaoPedidaDto"][];
+        };
         AlterarAmbienteRequest: {
             habilitado: null | boolean;
         };
@@ -2298,6 +2634,9 @@ export interface components {
             statusReconhecido: boolean;
             repositorios: string[];
             specDisponivel: boolean;
+            acoes?: null | components["schemas"]["AcoesDaFatiaDto"];
+            review?: null | components["schemas"]["ReviewDaFatiaDto"];
+            decisao?: null | string;
         };
         GavetaDto: {
             /** Format: uuid */
@@ -2313,6 +2652,10 @@ export interface components {
             filhas: components["schemas"]["GavetaIssueDto"][];
             repositorios: components["schemas"]["GavetaRepositorioDto"][];
             tasks: components["schemas"]["GavetaTaskDto"][];
+            acoes?: null | components["schemas"]["AcoesDaFatiaDto"];
+            review?: null | components["schemas"]["ReviewDaFatiaDto"];
+            decisao?: null | string;
+            acoesPedidas?: null | components["schemas"]["AcaoDaFatiaDto"][];
         };
         GavetaIssueDto: {
             /** Format: int64 */
@@ -2406,6 +2749,10 @@ export interface components {
             email?: null | string;
             papel?: string;
         };
+        PermissaoDaAcaoDto: {
+            pode: boolean;
+            motivo: null | string;
+        };
         PermissoesAplicacao: {
             podeEditar: boolean;
             podeEditarCadastro: boolean;
@@ -2460,8 +2807,15 @@ export interface components {
             ambientes?: components["schemas"]["AmbienteProjetoDto"][];
             dependeDe?: string[];
         };
+        ReprovarFatiaRequest: {
+            comentario: null | string;
+        };
         RespostaDeErro: {
             errors: components["schemas"]["ErroNaResposta"][];
+        };
+        ReviewDaFatiaDto: {
+            estado: string;
+            link: null | string;
         };
         UsuarioLogadoDto: {
             usuario: string;

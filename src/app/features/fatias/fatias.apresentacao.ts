@@ -75,3 +75,65 @@ export function horaDosDados(instante: string | null | undefined): string | null
   if (Number.isNaN(data.getTime())) return null;
   return `${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`;
 }
+
+const MOTIVOS: Record<string, string> = {
+  papel: 'Seu papel não permite esta ação.',
+  'sem-mr-aberta': 'A Fatia não tem merge request aberta.',
+  'ci-nao-verde': 'Todas as MRs abertas precisam estar com o CI verde.',
+  'decisao-em-andamento': 'Já há uma decisão em andamento para esta Fatia.',
+  'review-ja-pedido': 'O review já foi pedido.',
+};
+
+/** Texto do `title` do botão desativado: a API manda o código do motivo; desconhecido volta como veio. */
+export function textoDoMotivo(motivo: string | null | undefined): string | null {
+  if (!motivo) return null;
+  return MOTIVOS[motivo] ?? motivo;
+}
+
+export interface RotuloDeDecisao {
+  texto: string;
+  icone: string;
+}
+
+const DECISOES: Record<string, RotuloDeDecisao> = {
+  aprovando: { texto: 'aprovação pedida', icone: 'lucideClock' },
+  reprovando: { texto: 'reprovação pedida', icone: 'lucideClock' },
+  falhou: { texto: 'falhou, reexecutar na P2b', icone: 'lucideCircleX' },
+};
+
+/** Estado da decisão na linha; `nenhuma` (ou campo ausente, flag desligada) não mostra nada. */
+export function rotuloDaDecisao(decisao: string | null | undefined): RotuloDeDecisao | null {
+  return (decisao && DECISOES[decisao]) || null;
+}
+
+export interface RotuloDeReview extends RotuloDeDecisao {
+  /** Só `aberto` com http/https vira link; texto da API nunca vira HTML. */
+  link: string | null;
+}
+
+export function rotuloDoReview(review: { estado: string; link: string | null } | null | undefined): RotuloDeReview | null {
+  switch (review?.estado) {
+    case 'pedido':
+      return { texto: 'review pedido…', icone: 'lucideClock', link: null };
+    case 'aberto':
+      return { texto: 'review aberto', icone: 'lucideExternalLink', link: linkSeguro(review.link) };
+    case 'falhou':
+      return { texto: 'review falhou', icone: 'lucideCircleX', link: null };
+    default:
+      return null;
+  }
+}
+
+const TIPOS_DE_ACAO: Record<string, string> = { 'abrir-review': 'Abrir review', aprovar: 'Aprovar', reprovar: 'Reprovar' };
+const ICONES_DE_ACAO: Record<string, string> = {
+  pedida: 'lucideClock',
+  executando: 'lucideLoaderCircle',
+  confirmada: 'lucideCircleCheck',
+  falhou: 'lucideCircleX',
+  cancelada: 'lucideCircleSlash',
+};
+
+/** Linha da seção "Ações do bot" na gaveta: tipo e estado em texto, com ícone. */
+export function rotuloDaAcao(acao: { tipo: string; estado: string }): { tipo: string; estado: string; icone: string } {
+  return { tipo: TIPOS_DE_ACAO[acao.tipo] ?? acao.tipo, estado: acao.estado, icone: ICONES_DE_ACAO[acao.estado] ?? 'lucideCircleHelp' };
+}

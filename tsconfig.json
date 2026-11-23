@@ -21,7 +21,8 @@
       "@spartan-ng/helm/sheet": ["./src/app/shared/ui/sheet/src/index.ts"],
       "@spartan-ng/helm/tabs": ["./src/app/shared/ui/tabs/src/index.ts"],
       "@spartan-ng/helm/input": ["./src/app/shared/ui/input/src/index.ts"],
-      "@spartan-ng/helm/label": ["./src/app/shared/ui/label/src/index.ts"]
+      "@spartan-ng/helm/label": ["./src/app/shared/ui/label/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./src/app/shared/ui/dialog/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

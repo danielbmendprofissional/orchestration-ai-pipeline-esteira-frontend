@@ -9,6 +9,8 @@ export interface RotaData {
   perfis?: string[];
   /** Código da Fatia (`A1`): com o flag `Features:<código>` desligado a rota não existe e o item some do menu. */
   feature?: string;
+  /** Flag de uma parte da tela (P2: botões e seção de Ações do Painel); desligada, a rota continua e só a parte some. */
+  featureAcoes?: string;
 }
 
 /** Regra única de perfis, usada pelo `perfilGuard` e pelo menu: sem exigência libera; com exigência, vale ter um deles. */

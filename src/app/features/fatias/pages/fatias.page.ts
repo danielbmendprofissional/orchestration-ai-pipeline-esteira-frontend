@@ -6,9 +6,12 @@ import { AtualizarFatiasComponent } from '../components/atualizar-fatias.compone
 import { FatiaGavetaComponent } from '../components/fatia-gaveta.component';
 import { FatiasAvisosComponent } from '../components/fatias-avisos.component';
 import { FatiasPaginacaoComponent } from '../components/fatias-paginacao.component';
-import { FatiasTabelaComponent } from '../components/fatias-tabela.component';
+import { FatiasTabelaComponent, type PedidoDeDecisao } from '../components/fatias-tabela.component';
 import { FiltroAplicacoesComponent } from '../components/filtro-aplicacoes.component';
-import { FatiasService } from '../fatias.service';
+import { AprovarDialogoComponent } from '../components/aprovar-dialogo.component';
+import type { ErroDaDecisao, MrParaAprovar } from '../components/decisao-dialogo.tipos';
+import { ReprovarDialogoComponent } from '../components/reprovar-dialogo.component';
+import { FatiasService, type ResultadoDaDecisao } from '../fatias.service';
 import type { Aba, FatiaDoPainel, ProjetoFiltro } from '../fatias.tipos';
 
 const ABAS: { id: Aba; rotulo: string; vazio: string }[] = [
@@ -23,8 +26,8 @@ const PROJETOS: { id: ProjetoFiltro; rotulo: string; icone: string }[] = [
 const MAXIMO_RECENTES = 5;
 
 /**
- * Painel de Fatias (smart): só leitura. Fala só com o `FatiasService`; os componentes de `components/` são
- * burros. Nenhuma ação além de Atualizar e abrir/fechar a gaveta (Abrir Entrega, review e decisão são de outras fatias).
+ * Painel de Fatias (smart): leitura mais, com `Features:P2` ligada, a decisão (Abrir review, Aprovar, Reprovar) das
+ * Fatias Em revisão. Fala só com o `FatiasService`; os componentes de `components/` são burros. Abrir Entrega é de outra fatia.
  */
 @Component({
   selector: 'est-fatias-page',
@@ -38,6 +41,8 @@ const MAXIMO_RECENTES = 5;
     FatiasPaginacaoComponent,
     FatiasTabelaComponent,
     FiltroAplicacoesComponent,
+    AprovarDialogoComponent,
+    ReprovarDialogoComponent,
   ],
   providers: [provideIcons({ lucideCircleAlert, lucideListChecks, lucideMonitor, lucideSearch, lucideServer, lucideX })],
   template: `
@@ -113,6 +118,13 @@ const MAXIMO_RECENTES = 5;
         />
       </div>
 
+      @if (avisoDeDecisao(); as aviso) {
+        <div data-testid="decisao-aviso" role="alert" class="m-5 flex items-start gap-2 rounded-lg border border-bad-line bg-bad-soft px-3.5 py-2.5 text-sm text-fg-2">
+          <ng-icon name="lucideCircleAlert" size="16" class="mt-0.5 shrink-0 text-bad-fg" aria-hidden="true" />
+          <span>{{ aviso }}</span>
+        </div>
+      }
+
       <div id="painel-fatias" role="tabpanel" [attr.aria-labelledby]="'aba-' + dominio.aba()" [attr.aria-busy]="dominio.carregando()">
         @if (dominio.falhouAoCarregar()) {
           <div data-testid="fatias-erro" role="alert" class="m-5 flex flex-wrap items-center gap-3 rounded-lg border border-bad-line bg-bad-soft px-3.5 py-2.5 text-sm text-fg-2">
@@ -127,7 +139,13 @@ const MAXIMO_RECENTES = 5;
 
         @if (dominio.itens().length) {
           <div [class.opacity-60]="dominio.carregando()">
-            <est-fatias-tabela [itens]="dominio.itens()" [mostrarAplicacao]="mostrarAplicacao()" (abrir)="abrirGaveta($event)" />
+            <est-fatias-tabela
+              [itens]="dominio.itens()"
+              [mostrarAplicacao]="mostrarAplicacao()"
+              [acoes]="acoesPorLinha()"
+              (abrir)="abrirGaveta($event)"
+              (decidir)="decidir($event)"
+            />
           </div>
         } @else if (!dominio.carregando() && !dominio.falhouAoCarregar() && dominio.resposta()) {
           <div data-testid="fatias-vazio" class="flex flex-col items-center gap-2 px-5 py-12 text-center text-fg-muted">
@@ -158,8 +176,27 @@ const MAXIMO_RECENTES = 5;
       [gaveta]="dominio.gaveta()"
       [carregando]="dominio.carregandoGaveta()"
       [falhou]="dominio.falhouGaveta()"
+      [acoesLigadas]="dominio.acoesLigadas()"
       (fechar)="fecharGaveta()"
       (tentarDeNovo)="abrirGaveta(selecionada()!)"
+    />
+
+    <est-reprovar-dialogo
+      [aberto]="dialogo() === 'reprovar'"
+      [codigo]="alvo()?.codigo ?? ''"
+      [enviando]="enviando()"
+      [erro]="erroDoDialogo()"
+      (confirmar)="reprovar($event)"
+      (cancelar)="fecharDialogo()"
+    />
+    <est-aprovar-dialogo
+      [aberto]="dialogo() === 'aprovar'"
+      [codigo]="alvo()?.codigo ?? ''"
+      [mrs]="mrsDoAlvo()"
+      [enviando]="enviando()"
+      [erro]="erroDoDialogo()"
+      (confirmar)="aprovar()"
+      (cancelar)="fecharDialogo()"
     />
   `,
 })
@@ -173,6 +210,66 @@ export class FatiasPage implements OnInit {
   /** Com uma Aplicação só filtrada a coluna Aplicação sobra. */
   protected readonly mostrarAplicacao = computed(() => this.dominio.filtro().aplicacoes?.length !== 1);
   protected readonly textoVazio = computed(() => ABAS.find((a) => a.id === this.dominio.aba())?.vazio ?? '');
+
+  // decisões (P2): os diálogos são da página; a regra e as chamadas ficam no `FatiasService`
+  protected readonly dialogo = signal<'aprovar' | 'reprovar' | null>(null);
+  /** Última Fatia escolhida; não zera ao fechar para o título não piscar na animação de saída. */
+  protected readonly alvo = signal<FatiaDoPainel | null>(null);
+  protected readonly enviando = signal(false);
+  protected readonly erroDoDialogo = signal<ErroDaDecisao | null>(null);
+  protected readonly avisoDeDecisao = signal<string | null>(null);
+  protected readonly acoesPorLinha = computed(
+    () => new Map(this.dominio.itens().map((f) => [f.aplicacaoId + f.codigo, this.dominio.acoesDaLinha(f)] as const)),
+  );
+  /** MRs abertas da gaveta, se ela é desta Fatia; senão um item por projeto (a linha não traz as MRs). */
+  protected readonly mrsDoAlvo = computed<MrParaAprovar[]>(() => {
+    const f = this.alvo();
+    if (!f) return [];
+    const g = this.dominio.gaveta();
+    if (g && g.aplicacaoId === f.aplicacaoId && g.codigo === f.codigo) {
+      const abertas = g.repositorios.flatMap((r) => r.mrs.filter((m) => m.estado === 'opened').map((m) => ({ repositorio: r.repositorio, iid: m.iid, titulo: m.titulo })));
+      if (abertas.length) return abertas;
+    }
+    return f.repositorios.map((repositorio) => ({ repositorio }));
+  });
+
+  protected async decidir(pedido: PedidoDeDecisao): Promise<void> {
+    this.avisoDeDecisao.set(null);
+    this.alvo.set(pedido.fatia);
+    if (pedido.tipo === 'abrirReview') {
+      const r = await this.dominio.abrirReview(pedido.fatia);
+      if (!r.ok) this.avisoDeDecisao.set(r.mensagem ?? 'Não foi possível pedir o review.');
+      return;
+    }
+    this.erroDoDialogo.set(null);
+    this.dialogo.set(pedido.tipo);
+  }
+
+  protected aprovar(): Promise<void> {
+    return this.enviar((f) => this.dominio.aprovar(f));
+  }
+
+  protected reprovar(comentario: string): Promise<void> {
+    return this.enviar((f) => this.dominio.reprovar(f, comentario));
+  }
+
+  protected fecharDialogo(): void {
+    if (!this.enviando()) this.dialogo.set(null);
+  }
+
+  private async enviar(pedir: (f: FatiaDoPainel) => Promise<ResultadoDaDecisao>): Promise<void> {
+    const f = this.alvo();
+    if (!f || this.enviando()) return;
+    this.enviando.set(true);
+    this.erroDoDialogo.set(null);
+    try {
+      const r = await pedir(f);
+      if (r.ok) this.dialogo.set(null);
+      else this.erroDoDialogo.set({ codigo: r.codigo, mensagem: r.mensagem });
+    } finally {
+      this.enviando.set(false);
+    }
+  }
 
   ngOnInit(): void {
     void this.dominio.carregar();

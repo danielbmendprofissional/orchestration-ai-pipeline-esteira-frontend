@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronRight, lucideMonitor, lucideServer } from '@ng-icons/lucide';
 import { rotuloDoProjeto } from '../fatias.apresentacao';
+import type { AcoesDaLinha } from '../fatias.service';
 import type { FatiaDoPainel } from '../fatias.tipos';
 import { EstadoBadgeComponent } from './estado-badge.component';
+import { FatiaAcoesComponent } from './fatia-acoes.component';
+
+export interface PedidoDeDecisao {
+  tipo: 'abrirReview' | 'aprovar' | 'reprovar';
+  fatia: FatiaDoPainel;
+}
 
 /**
  * Lista de Fatias do Painel (só leitura): tabela semântica; a linha inteira abre a gaveta e o botão do código é o
@@ -12,7 +19,7 @@ import { EstadoBadgeComponent } from './estado-badge.component';
 @Component({
   selector: 'est-fatias-tabela',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIcon, EstadoBadgeComponent],
+  imports: [NgIcon, EstadoBadgeComponent, FatiaAcoesComponent],
   providers: [provideIcons({ lucideChevronRight, lucideMonitor, lucideServer })],
   template: `
     <div class="overflow-x-auto">
@@ -28,6 +35,9 @@ import { EstadoBadgeComponent } from './estado-badge.component';
             <th scope="col" class="px-3">Risco</th>
             <th scope="col" class="px-3">Estado</th>
             <th scope="col" class="px-3">Progresso</th>
+            @if (comAcoes()) {
+              <th scope="col" class="px-3">Decisão</th>
+            }
             <th scope="col" class="w-8 px-3"><span class="sr-only">Abrir detalhes</span></th>
           </tr>
         </thead>
@@ -68,6 +78,17 @@ import { EstadoBadgeComponent } from './estado-badge.component';
               <td class="px-3 py-3" [class]="f.risco === 'alto' ? 'font-semibold text-run-fg' : 'text-fg-muted'">{{ f.risco ?? '—' }}</td>
               <td class="px-3 py-3"><est-estado-badge [estado]="f.estado" [emCorrecao]="f.emCorrecao" /></td>
               <td class="px-3 py-3 text-fg-muted">{{ f.progresso ?? '' }}</td>
+              @if (comAcoes()) {
+                <td class="px-3 py-3">
+                  <est-fatia-acoes
+                    [acoes]="acoes().get(f.aplicacaoId + f.codigo) ?? null"
+                    [codigo]="f.codigo"
+                    (abrirReview)="decidir.emit({ tipo: 'abrirReview', fatia: f })"
+                    (reprovar)="decidir.emit({ tipo: 'reprovar', fatia: f })"
+                    (aprovar)="decidir.emit({ tipo: 'aprovar', fatia: f })"
+                  />
+                </td>
+              }
               <td class="px-3 py-3 text-fg-dim"><ng-icon name="lucideChevronRight" size="16" aria-hidden="true" /></td>
             </tr>
           }
@@ -80,6 +101,11 @@ export class FatiasTabelaComponent {
   readonly itens = input.required<FatiaDoPainel[]>();
   readonly mostrarAplicacao = input(true);
   readonly abrir = output<FatiaDoPainel>();
+  /** Ações por linha (chave: aplicação + código). Vazio ou só `null` = flag desligada: sem coluna. */
+  readonly acoes = input<ReadonlyMap<string, AcoesDaLinha | null>>(new Map());
+  readonly decidir = output<PedidoDeDecisao>();
+
+  protected readonly comAcoes = computed(() => this.itens().some((f) => !!this.acoes().get(f.aplicacaoId + f.codigo)));
 
   protected rotulo(repositorio: string): string {
     return rotuloDoProjeto(repositorio);

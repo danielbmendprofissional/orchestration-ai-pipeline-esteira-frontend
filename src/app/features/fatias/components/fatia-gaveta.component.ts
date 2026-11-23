@@ -19,7 +19,7 @@ import {
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { linkSeguro, rotuloDoPipeline, rotuloDoProjeto } from '../fatias.apresentacao';
+import { linkSeguro, rotuloDaAcao, rotuloDoPipeline, rotuloDoProjeto } from '../fatias.apresentacao';
 import type { FatiaDoPainel, Gaveta } from '../fatias.tipos';
 import { EstadoBadgeComponent } from './estado-badge.component';
 
@@ -153,6 +153,46 @@ const LINK = 'inline-flex items-center gap-1 rounded-sm text-brand-fg underline-
                 </ul>
               }
 
+              @if (acoesLigadas() && g.acoesPedidas; as pedidas) {
+                <section data-testid="gaveta-acoes" aria-labelledby="gaveta-acoes-titulo">
+                  <h3 id="gaveta-acoes-titulo" class="mt-6 mb-2 flex items-center gap-2 text-2xs font-semibold text-fg-muted"><ng-icon name="lucideClock" size="14" aria-hidden="true" />Ações do bot</h3>
+                  @if (!pedidas.length) {
+                    <p class="text-sm text-fg-dim">Nenhuma ação pedida.</p>
+                  } @else {
+                    <ul class="flex flex-col divide-y divide-line rounded-lg border border-line text-sm">
+                      @for (a of pedidas; track a.id) {
+                        <li data-testid="gaveta-acao" class="flex flex-col gap-1 px-3.5 py-2.5">
+                          <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <span class="font-semibold text-fg">{{ acao(a).tipo }}</span>
+                            <span class="inline-flex items-center gap-1.5" [class]="a.estado === 'falhou' ? 'text-bad-fg' : 'text-fg-2'">
+                              <ng-icon [name]="acao(a).icone" size="14" aria-hidden="true" />{{ a.estado }}
+                            </span>
+                            @if (a.repositorio) {
+                              <span class="text-fg-muted">{{ rotuloProjeto(a.repositorio) }}</span>
+                            }
+                            @if (a.repositorio && a.mrIid) {
+                              <span class="font-mono text-xs text-fg-2">!{{ a.mrIid }}</span>
+                            }
+                          </p>
+                          <p class="text-xs text-fg-muted">
+                            @if (a.pedidaPor) {
+                              <span>por {{ a.pedidaPor }} · </span>
+                            }
+                            <time [attr.datetime]="a.pedidaEm">{{ quando(a.pedidaEm) }}</time>
+                            @if (a.codigoErro) {
+                              <span> · <span class="font-mono text-bad-fg">{{ a.codigoErro }}</span></span>
+                            }
+                          </p>
+                          @if (a.comentario) {
+                            <p class="rounded-sm bg-surface-2 px-2.5 py-1.5 text-xs break-words whitespace-pre-wrap text-fg-2">{{ a.comentario }}</p>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                </section>
+              }
+
               @if (g.tasks.length) {
                 <h3 class="mt-6 mb-2 flex items-center gap-2 text-2xs font-semibold text-fg-muted"><ng-icon name="lucideListChecks" size="14" aria-hidden="true" />Tasks</h3>
                 <ul class="flex flex-col divide-y divide-line rounded-lg border border-line text-sm">
@@ -199,6 +239,8 @@ export class FatiaGavetaComponent {
   readonly gaveta = input<Gaveta | null>(null);
   readonly carregando = input(false);
   readonly falhou = input(false);
+  /** `Features:P2` ligada: só então a seção Ações do bot aparece. */
+  readonly acoesLigadas = input(false);
   readonly fechar = output<void>();
   readonly tentarDeNovo = output<void>();
 
@@ -206,6 +248,12 @@ export class FatiaGavetaComponent {
   protected readonly seguro = linkSeguro;
   protected readonly pipeline = rotuloDoPipeline;
   protected readonly rotuloProjeto = rotuloDoProjeto;
+  protected readonly acao = rotuloDaAcao;
+
+  protected quando(iso: string): string {
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? iso : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  }
 
   protected projetos(f: FatiaDoPainel): string {
     return f.repositorios.map(rotuloDoProjeto).join(' e ') || '—';
