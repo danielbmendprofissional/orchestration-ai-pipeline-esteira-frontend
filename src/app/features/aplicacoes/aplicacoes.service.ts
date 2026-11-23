@@ -35,7 +35,7 @@ export interface FormEdicaoAplicacao {
 }
 
 /** Erro de negócio que cabe num campo vem com `campo` e `mensagem`; outro erro já virou toast no interceptor. */
-export type ResultadoComando = { ok: true } | { ok: false; campo?: CampoDoForm; mensagem?: string };
+export type ResultadoComando = { ok: true } | { ok: false; campo?: CampoDoForm | 'workspace'; mensagem?: string };
 
 /** Códigos estáveis da API (ADR-0003) que a gaveta mostra junto do campo (A1, critérios 2 a 4). */
 const ERROS_DE_CAMPO: Record<string, { campo: CampoDoForm; mensagem: string }> = {
@@ -63,6 +63,14 @@ const ERROS_GERAIS: Record<string, string> = {
   'destino.configuracao-com-segredo':
     'A configuração do destino não pode ter segredo (chave com PASSWORD, SENHA, SECRET, TOKEN, KEY ou CREDENTIAL). Cadastre o segredo como variável do GitLab.',
 };
+
+/** Recusas do workspace (P1, critério 1): sempre junto do campo, em pt-BR. */
+const ERROS_DO_WORKSPACE: Record<string, string> = {
+  'aplicacao.workspace-fora-do-grupo': 'Esse projeto não pertence ao grupo do GitLab da aplicação.',
+  'aplicacao.workspace-e-projeto': 'Esse projeto já está cadastrado como projeto da aplicação e não pode ser o workspace.',
+  'aplicacao.workspace-nao-encontrado': 'Projeto não encontrado no GitLab. Atualize a lista e escolha de novo.',
+};
+const ERRO_GITLAB_DO_WORKSPACE = 'Não foi possível falar com o GitLab agora. Tente de novo em instantes.';
 
 function resultadoDoErro(erro: unknown): ResultadoComando {
   const codigo = codigoDoErro(erro);
@@ -126,6 +134,8 @@ export class AplicacoesService {
   readonly erroDeProjetos = this.erroProjetos$.asReadonly();
   readonly erroDePolitica = this.erroPolitica$.asReadonly();
   readonly erroDePapeis = this.erroPapeis$.asReadonly();
+  private readonly erroWorkspace$ = signal<string | null>(null);
+  readonly erroDoWorkspace = this.erroWorkspace$.asReadonly();
 
   async carregarLista(pagina = 1): Promise<void> {
     this.paginaAtual.set(pagina);
@@ -190,6 +200,7 @@ export class AplicacoesService {
     this.erroProjetos$.set(null);
     this.erroPolitica$.set(null);
     this.erroPapeis$.set(null);
+    this.erroWorkspace$.set(null);
     try {
       const [detalhe, permissoes] = await Promise.all([this.api.obter(id), this.api.permissoes(id)]);
       this.detalhe$.set(detalhe);
@@ -256,6 +267,26 @@ export class AplicacoesService {
     } catch {
       // o erro já virou toast no interceptor
     }
+  }
+
+  /** `null` limpa. Depois do 204 o detalhe guarda id e caminho do projeto escolhido. */
+  async definirWorkspace(aplicacaoId: string, projeto: ProjetoGitLabItem | null): Promise<ResultadoComando> {
+    try {
+      await this.api.definirWorkspace(aplicacaoId, projeto?.projetoGitLabId ?? null);
+    } catch (erro) {
+      const codigo = codigoDoErro(erro);
+      const mensagem = codigo ? (ERROS_DO_WORKSPACE[codigo] ?? (codigo.startsWith('gitlab.') ? ERRO_GITLAB_DO_WORKSPACE : undefined)) : undefined;
+      this.erroWorkspace$.set(mensagem ?? null);
+      return mensagem ? { ok: false, campo: 'workspace', mensagem } : { ok: false };
+    }
+    this.erroWorkspace$.set(null);
+    this.detalhe$.update((d) => {
+      if (!d) return d;
+      const resto = { ...d };
+      delete resto.workspace;
+      return projeto ? { ...resto, workspace: { projetoGitLabId: projeto.projetoGitLabId, caminho: projeto.caminho } } : resto;
+    });
+    return { ok: true };
   }
 
   async carregarProjetosDoGrupo(aplicacaoId: string): Promise<void> {

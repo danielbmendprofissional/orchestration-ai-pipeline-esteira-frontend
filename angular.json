@@ -57,6 +57,10 @@
                 {
                   "replace": "src/app/features/aplicacoes/aplicacoes-api.service.ts",
                   "with": "src/app/features/aplicacoes/aplicacoes-api.service.preview.ts"
+                },
+                {
+                  "replace": "src/app/features/fatias/fatias-api.service.ts",
+                  "with": "src/app/features/fatias/fatias-api.service.preview.ts"
                 }
               ],
               "outputHashing": "all"

@@ -43,6 +43,14 @@ export const routes: Routes = [
         ],
       },
       {
+        // Atrás do flag Features:P1: desligado, a rota nem casa e a URL cai no Não encontrado.
+        path: 'fatias',
+        canMatch: [featureGuard],
+        title: 'Painel de Fatias — Esteira',
+        data: { menu: { rotulo: 'Painel de Fatias', icone: 'lucideListChecks' }, feature: 'P1' } satisfies RotaData,
+        loadComponent: () => import('./features/fatias/pages/fatias.page').then((m) => m.FatiasPage),
+      },
+      {
         path: 'sem-acesso',
         title: 'Sem acesso — Esteira',
         loadComponent: () => import('./layout/pages/sem-acesso.page').then((m) => m.SemAcessoPage),

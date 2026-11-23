@@ -67,6 +67,10 @@ export class AplicacoesApiService {
     return firstValueFrom(this.http.get<ProjetoGitLabItem[]>(`${BASE}/${id}/gitlab/projetos`));
   }
 
+  async definirWorkspace(id: string, projetoGitLabId: number | string | null): Promise<void> {
+    await firstValueFrom(this.http.put<void>(`${BASE}/${id}/workspace`, { projetoGitLabId }));
+  }
+
   cadastrarProjeto(id: string, pedido: CadastrarProjetoRequest): Promise<ProjetoResumo> {
     return firstValueFrom(this.http.post<ProjetoResumo>(`${BASE}/${id}/projetos`, pedido));
   }
