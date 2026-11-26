@@ -58,7 +58,7 @@ function montarFatias(): FatiaDoPainel[] {
 }
 
 /** Situações da P2 nas Fatias Em revisão, ciclando a cada 8 linhas. */
-const SITUACOES = ['ci-verde', 'ci-vermelho', 'review-pedido', 'review-aberto', 'aprovando', 'reprovando', 'api-e-front', 'falhou'] as const;
+const SITUACOES = ['ci-verde', 'ci-vermelho', 'review-pedido', 'review-aberto', 'aprovando', 'reprovando', 'api-e-front', 'falhou', 'reexecutada'] as const;
 type Situacao = (typeof SITUACOES)[number];
 const COMENTARIO_COM_MARCACAO = '<b>Falta</b> teste do erro & "aspas"';
 
@@ -81,6 +81,7 @@ function acaoDeExemplo(f: FatiaDoPainel, tipo: string, estado: string, repositor
     atualizadaEm: new Date(Date.now() - 5 * 60_000).toISOString(),
     codigoErro: null,
     comentario: null,
+    podeReexecutar: { pode: false, motivo: 'nao-falhou' },
     ...extra,
   };
 }
@@ -96,7 +97,13 @@ function acoesIniciais(f: FatiaDoPainel, situacao: Situacao): AcaoDaFatia[] {
     case 'reprovando':
       return f.repositorios.map((r) => acaoDeExemplo(f, 'reprovar', 'pedida', r, { comentario: COMENTARIO_COM_MARCACAO }));
     case 'falhou':
-      return f.repositorios.map((r) => acaoDeExemplo(f, 'aprovar', 'falhou', r, { codigoErro: 'gitlab.merge-recusado' }));
+      return f.repositorios.map((r) => acaoDeExemplo(f, 'aprovar', 'falhou', r, { codigoErro: 'gitlab.merge-recusado', podeReexecutar: { pode: true, motivo: null } }));
+    case 'reexecutada':
+      // A falha original (já não é a última) e a Ação nova da reexecução, em andamento.
+      return f.repositorios.flatMap((r) => [
+        acaoDeExemplo(f, 'aprovar', 'falhou', r, { codigoErro: 'gitlab.merge-recusado', podeReexecutar: { pode: false, motivo: 'nao-e-a-ultima' } }),
+        acaoDeExemplo(f, 'aprovar', 'pedida', r, { pedidaEm: new Date(Date.now() - 60_000).toISOString() }),
+      ]);
     default:
       return [];
   }
@@ -126,7 +133,7 @@ function aplicarSituacoes(fatias: FatiaDoPainel[], ci: Map<string, boolean>, ped
       estado: situacao === 'review-pedido' ? 'pedido' : situacao === 'review-aberto' ? 'aberto' : 'nenhum',
       link: situacao === 'review-aberto' ? `https://review.exemplo.local/${f.codigo.toLowerCase()}` : null,
     };
-    f.decisao = situacao === 'aprovando' ? 'aprovando' : situacao === 'reprovando' ? 'reprovando' : situacao === 'falhou' ? 'falhou' : 'nenhuma';
+    f.decisao = situacao === 'aprovando' || situacao === 'reexecutada' ? 'aprovando' : situacao === 'reprovando' ? 'reprovando' : situacao === 'falhou' ? 'falhou' : 'nenhuma';
     ci.set(chave(f.aplicacaoId, f.codigo), situacao !== 'ci-vermelho');
     pedidas.set(chave(f.aplicacaoId, f.codigo), acoesIniciais(f, situacao));
     recalcularAcoes(f, situacao !== 'ci-vermelho');
@@ -284,6 +291,25 @@ export class FatiasApiService {
     this.pedidas.set(chave(aplicacaoId, codigo), [...(this.pedidas.get(chave(aplicacaoId, codigo)) ?? []), ...novas]);
     const acoes: AcaoPedida[] = novas.map((a) => ({ id: a.id, tipo: a.tipo, estado: a.estado, repositorio: a.repositorio ?? 'workspace', mrIid: a.mrIid }));
     return Promise.resolve({ acoes });
+  }
+
+  /** Reexecutar em memória: cria a Ação nova (tentativa + 1), tira a permissão da falhada e põe a decisão em andamento. */
+  reexecutar(aplicacaoId: string, codigo: string, acaoId: string): Promise<AcoesPedidas> {
+    const f = this.fatias.find((x) => x.aplicacaoId === aplicacaoId && x.codigo === codigo);
+    const k = chave(aplicacaoId, codigo);
+    const lista = this.pedidas.get(k) ?? [];
+    const falhada = lista.find((a) => a.id === acaoId);
+    if (!f || !falhada || falhada.estado !== 'falhou' || !falhada.podeReexecutar.pode) {
+      return Promise.reject(new Error('Ação do preview não reexecutável.'));
+    }
+    const agora = new Date().toISOString();
+    const nova = acaoDeExemplo(f, falhada.tipo, 'pedida', falhada.repositorio, { pedidaEm: agora, atualizadaEm: agora });
+    falhada.podeReexecutar = { pode: false, motivo: 'nao-e-a-ultima' };
+    if (falhada.tipo === 'abrir-review') f.review = { estado: 'pedido', link: null };
+    else f.decisao = falhada.tipo === 'aprovar' ? 'aprovando' : 'reprovando';
+    recalcularAcoes(f, this.ciVerde.get(k) ?? true);
+    this.pedidas.set(k, [...lista, nova]);
+    return Promise.resolve({ acoes: [{ id: nova.id, tipo: nova.tipo, estado: nova.estado, repositorio: nova.repositorio ?? 'workspace', mrIid: nova.mrIid }] });
   }
 
   hotfixes(aplicacaoId: string): Promise<Hotfixes> {

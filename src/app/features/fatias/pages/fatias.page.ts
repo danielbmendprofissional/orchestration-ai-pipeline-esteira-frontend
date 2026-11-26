@@ -3,7 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCircleAlert, lucideListChecks, lucideMonitor, lucideSearch, lucideServer, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { AtualizarFatiasComponent } from '../components/atualizar-fatias.component';
-import { FatiaGavetaComponent } from '../components/fatia-gaveta.component';
+import { FatiaGavetaComponent, type AvisoDaGaveta } from '../components/fatia-gaveta.component';
 import { FatiasAvisosComponent } from '../components/fatias-avisos.component';
 import { FatiasPaginacaoComponent } from '../components/fatias-paginacao.component';
 import { FatiasTabelaComponent, type PedidoDeDecisao } from '../components/fatias-tabela.component';
@@ -12,7 +12,7 @@ import { AprovarDialogoComponent } from '../components/aprovar-dialogo.component
 import type { ErroDaDecisao, MrParaAprovar } from '../components/decisao-dialogo.tipos';
 import { ReprovarDialogoComponent } from '../components/reprovar-dialogo.component';
 import { FatiasService, type ResultadoDaDecisao } from '../fatias.service';
-import type { Aba, FatiaDoPainel, ProjetoFiltro } from '../fatias.tipos';
+import type { Aba, AcaoDaFatia, FatiaDoPainel, ProjetoFiltro } from '../fatias.tipos';
 
 const ABAS: { id: Aba; rotulo: string; vazio: string }[] = [
   { id: 'andamento', rotulo: 'Em andamento', vazio: 'Quando uma Fatia ganhar spec, entrar em execução ou em revisão, ela aparece aqui.' },
@@ -177,6 +177,9 @@ const MAXIMO_RECENTES = 5;
       [carregando]="dominio.carregandoGaveta()"
       [falhou]="dominio.falhouGaveta()"
       [acoesLigadas]="dominio.acoesLigadas()"
+      [aviso]="avisoDaGaveta()"
+      [reexecutando]="reexecutando()"
+      (reexecutar)="reexecutar($event)"
       (fechar)="fecharGaveta()"
       (tentarDeNovo)="abrirGaveta(selecionada()!)"
     />
@@ -245,6 +248,29 @@ export class FatiasPage implements OnInit {
     this.dialogo.set(pedido.tipo);
   }
 
+  protected readonly avisoDaGaveta = signal<AvisoDaGaveta | null>(null);
+  protected readonly reexecutando = signal(false);
+
+  /** Reexecutar uma Ação da gaveta: mostra o estado (202) ou o erro de negócio como texto e recarrega a gaveta (a lista o serviço já recarregou). */
+  protected async reexecutar(acao: AcaoDaFatia): Promise<void> {
+    const f = this.selecionada();
+    if (!f || this.reexecutando()) return;
+    this.reexecutando.set(true);
+    this.avisoDaGaveta.set(null);
+    try {
+      const r = await this.dominio.reexecutar(f, acao);
+      if (r.ok) {
+        const nova = r.acoes[0];
+        this.avisoDaGaveta.set({ tipo: 'ok', texto: `Reexecução pedida${nova ? ` (${nova.estado})` : ''}. A lista foi atualizada.` });
+        await this.dominio.abrirGaveta(f.aplicacaoId, f.codigo);
+      } else {
+        this.avisoDaGaveta.set({ tipo: 'erro', texto: r.mensagem ?? 'Não foi possível reexecutar a Ação.' });
+      }
+    } finally {
+      this.reexecutando.set(false);
+    }
+  }
+
   protected aprovar(): Promise<void> {
     return this.enviar((f) => this.dominio.aprovar(f));
   }
@@ -298,11 +324,13 @@ export class FatiasPage implements OnInit {
 
   protected abrirGaveta(fatia: FatiaDoPainel): void {
     this.selecionada.set(fatia);
+    this.avisoDaGaveta.set(null);
     void this.dominio.abrirGaveta(fatia.aplicacaoId, fatia.codigo);
   }
 
   protected fecharGaveta(): void {
     this.selecionada.set(null);
+    this.avisoDaGaveta.set(null);
     this.dominio.fecharGaveta();
   }
 }

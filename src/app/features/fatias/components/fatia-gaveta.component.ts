@@ -19,9 +19,14 @@ import {
 import { BrnDialogState } from '@spartan-ng/brain/dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
-import { linkSeguro, rotuloDaAcao, rotuloDoPipeline, rotuloDoProjeto } from '../fatias.apresentacao';
-import type { FatiaDoPainel, Gaveta } from '../fatias.tipos';
+import { linkSeguro, rotuloDaAcao, rotuloDoPipeline, rotuloDoProjeto, textoDoMotivo } from '../fatias.apresentacao';
+import type { AcaoDaFatia, FatiaDoPainel, Gaveta } from '../fatias.tipos';
 import { EstadoBadgeComponent } from './estado-badge.component';
+
+export interface AvisoDaGaveta {
+  tipo: 'ok' | 'erro';
+  texto: string;
+}
 
 const ESTADO_DE_ISSUE_OU_MR: Record<string, string> = { opened: 'aberta', closed: 'fechada', merged: 'mergeada', locked: 'bloqueada' };
 
@@ -80,6 +85,15 @@ const LINK = 'inline-flex items-center gap-1 rounded-sm text-brand-fg underline-
                   <dd class="text-fg">{{ f.progresso }}</dd>
                 }
               </dl>
+            }
+
+            @if (aviso(); as av) {
+              <p
+                data-testid="gaveta-aviso"
+                [attr.role]="av.tipo === 'erro' ? 'alert' : 'status'"
+                class="mt-4 rounded-lg border px-3.5 py-2.5 text-sm text-fg-2"
+                [class]="av.tipo === 'erro' ? 'border-bad-line bg-bad-soft' : 'border-line bg-surface-2'"
+              >{{ av.texto }}</p>
             }
 
             @if (carregando()) {
@@ -186,6 +200,25 @@ const LINK = 'inline-flex items-center gap-1 rounded-sm text-brand-fg underline-
                           @if (a.comentario) {
                             <p class="rounded-sm bg-surface-2 px-2.5 py-1.5 text-xs break-words whitespace-pre-wrap text-fg-2">{{ a.comentario }}</p>
                           }
+                          @if (a.estado === 'falhou') {
+                            <div class="mt-1">
+                              <button
+                                hlmBtn
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                data-testid="gaveta-reexecutar"
+                                [attr.aria-label]="'Reexecutar ' + acao(a).tipo"
+                                [disabled]="!a.podeReexecutar.pode || reexecutando()"
+                                [attr.title]="a.podeReexecutar.pode ? null : motivo(a.podeReexecutar.motivo)"
+                                [attr.aria-describedby]="a.podeReexecutar.pode || !motivo(a.podeReexecutar.motivo) ? null : 'reexecutar-motivo-' + a.id"
+                                (click)="reexecutar.emit(a)"
+                              >Reexecutar</button>
+                              @if (!a.podeReexecutar.pode && motivo(a.podeReexecutar.motivo)) {
+                                <span class="sr-only" [id]="'reexecutar-motivo-' + a.id">{{ motivo(a.podeReexecutar.motivo) }}</span>
+                              }
+                            </div>
+                          }
                         </li>
                       }
                     </ul>
@@ -241,6 +274,10 @@ export class FatiaGavetaComponent {
   readonly falhou = input(false);
   /** `Features:P2` ligada: só então a seção Ações do bot aparece. */
   readonly acoesLigadas = input(false);
+  /** Resultado do último Reexecutar (estado do 202 ou texto do erro de negócio), sempre como texto. */
+  readonly aviso = input<AvisoDaGaveta | null>(null);
+  readonly reexecutando = input(false);
+  readonly reexecutar = output<AcaoDaFatia>();
   readonly fechar = output<void>();
   readonly tentarDeNovo = output<void>();
 
@@ -249,6 +286,7 @@ export class FatiaGavetaComponent {
   protected readonly pipeline = rotuloDoPipeline;
   protected readonly rotuloProjeto = rotuloDoProjeto;
   protected readonly acao = rotuloDaAcao;
+  protected readonly motivo = textoDoMotivo;
 
   protected quando(iso: string): string {
     const d = new Date(iso);

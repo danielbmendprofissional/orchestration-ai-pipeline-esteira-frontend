@@ -8,7 +8,7 @@ const fatia: FatiaDoPainel = {
 };
 const acao = (extra: Partial<AcaoDaFatia> = {}): AcaoDaFatia => ({
   id: 'x1', tipo: 'reprovar', estado: 'pedida', repositorio: 'api', mrIid: 7, pedidaPor: 'Ana Souza',
-  pedidaEm: '2026-11-23T10:00:00Z', atualizadaEm: '2026-11-23T10:00:00Z', codigoErro: null, comentario: null, ...extra,
+  pedidaEm: '2026-11-23T10:00:00Z', atualizadaEm: '2026-11-23T10:00:00Z', codigoErro: null, comentario: null, podeReexecutar: { pode: false, motivo: 'nao-falhou' }, ...extra,
 });
 const gaveta = (extra: Partial<Gaveta> = {}): Gaveta => ({
   aplicacaoId: 'a1', codigo: 'P2', titulo: 'Review', estado: 'em-revisao', progresso: null, emCorrecao: false, formatoAnterior: false,

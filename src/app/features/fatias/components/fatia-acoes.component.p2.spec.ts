@@ -90,7 +90,7 @@ describe('[P2] FatiaAcoesComponent', () => {
   it.each([
     ['aprovando', 'aprovação pedida'],
     ['reprovando', 'reprovação pedida'],
-    ['falhou', 'falhou, reexecutar na P2b'],
+    ['falhou', 'falhou — reexecutar na gaveta'],
   ] as const)('decisao "%s" mostra "%s" e mantém Aprovar e Reprovar desativados', (decisao, texto) => {
     const emAndamento = { pode: false, motivo: 'decisao-em-andamento' };
     montar(acoes({ decisao, aprovar: emAndamento, reprovar: emAndamento }));
