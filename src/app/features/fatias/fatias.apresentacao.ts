@@ -82,6 +82,8 @@ const MOTIVOS: Record<string, string> = {
   'ci-nao-verde': 'Todas as MRs abertas precisam estar com o CI verde.',
   'decisao-em-andamento': 'Já há uma decisão em andamento para esta Fatia.',
   'review-ja-pedido': 'O review já foi pedido.',
+  'nao-falhou': 'Só uma Ação que falhou pode ser reexecutada.',
+  'nao-e-a-ultima': 'Já existe uma Ação mais recente do mesmo tipo nesta MR.',
 };
 
 /** Texto do `title` do botão desativado: a API manda o código do motivo; desconhecido volta como veio. */
@@ -98,7 +100,7 @@ export interface RotuloDeDecisao {
 const DECISOES: Record<string, RotuloDeDecisao> = {
   aprovando: { texto: 'aprovação pedida', icone: 'lucideClock' },
   reprovando: { texto: 'reprovação pedida', icone: 'lucideClock' },
-  falhou: { texto: 'falhou, reexecutar na P2b', icone: 'lucideCircleX' },
+  falhou: { texto: 'falhou — reexecutar na gaveta', icone: 'lucideCircleX' },
 };
 
 /** Estado da decisão na linha; `nenhuma` (ou campo ausente, flag desligada) não mostra nada. */

@@ -49,6 +49,13 @@ export class FatiasApiService {
     return firstValueFrom(this.http.post<AcoesPedidas>(`${APLICACOES}/${aplicacaoId}/fatias/${encodeURIComponent(codigo)}/${rota}`, corpo));
   }
 
+  /** Reexecutar uma Ação `falhou` (P2b): POST sem corpo, 202 com a Ação nova. */
+  reexecutar(aplicacaoId: string, codigo: string, acaoId: string): Promise<AcoesPedidas> {
+    return firstValueFrom(
+      this.http.post<AcoesPedidas>(`${APLICACOES}/${aplicacaoId}/fatias/${encodeURIComponent(codigo)}/acoes/${encodeURIComponent(acaoId)}/reexecutar`, null),
+    );
+  }
+
   hotfixes(aplicacaoId: string): Promise<Hotfixes> {
     return firstValueFrom(this.http.get<Hotfixes>(`${APLICACOES}/${aplicacaoId}/hotfixes`));
   }

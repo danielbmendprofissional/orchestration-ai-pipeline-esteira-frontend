@@ -14,7 +14,7 @@ describe('[P2] apresentação da decisão', () => {
     expect(rotuloDaDecisao(undefined)).toBeNull();
     expect(rotuloDaDecisao('aprovando')?.texto).toBe('aprovação pedida');
     expect(rotuloDaDecisao('reprovando')?.texto).toBe('reprovação pedida');
-    expect(rotuloDaDecisao('falhou')?.texto).toBe('falhou, reexecutar na P2b');
+    expect(rotuloDaDecisao('falhou')?.texto).toBe('falhou — reexecutar na gaveta');
   });
 
   it('o review vira texto, e só "aberto" tem link seguro', () => {

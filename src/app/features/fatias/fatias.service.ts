@@ -5,6 +5,7 @@ import { FatiasApiService } from './fatias-api.service';
 import { textoDoMotivo } from './fatias.apresentacao';
 import type {
   Aba,
+  AcaoDaFatia,
   AcaoPedida,
   AcoesDaFatia,
   ColunaOrdenavel,
@@ -273,6 +274,21 @@ export class FatiasService {
     }
     try {
       const { acoes } = await pedir();
+      await this.carregar();
+      return { ok: true, acoes };
+    } catch (erro) {
+      const codigo = codigoDoErro(erro);
+      if (codigo) await this.carregar();
+      return { ok: false, codigo, mensagem: errosDaResposta(erro)[0]?.message ?? null };
+    }
+  }
+
+  /** Reexecutar (P2b): a permissão vem da API (`podeReexecutar`); 202 e erro de negócio viram resultado e recarregam a lista uma vez. */
+  async reexecutar(fatia: ComDecisao, acao: AcaoDaFatia): Promise<ResultadoDaDecisao> {
+    if (!this.acoesLigadas()) return { ok: false, codigo: null, mensagem: null };
+    if (!acao.podeReexecutar.pode) return { ok: false, codigo: null, mensagem: textoDoMotivo(acao.podeReexecutar.motivo) };
+    try {
+      const { acoes } = await this.api.reexecutar(fatia.aplicacaoId, fatia.codigo, acao.id);
       await this.carregar();
       return { ok: true, acoes };
     } catch (erro) {
