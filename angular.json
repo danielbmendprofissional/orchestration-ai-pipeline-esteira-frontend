@@ -61,6 +61,10 @@
                 {
                   "replace": "src/app/features/fatias/fatias-api.service.ts",
                   "with": "src/app/features/fatias/fatias-api.service.preview.ts"
+                },
+                {
+                  "replace": "src/app/core/tempo-real/tempo-real.service.ts",
+                  "with": "src/app/core/tempo-real/tempo-real.service.preview.ts"
                 }
               ],
               "outputHashing": "all"

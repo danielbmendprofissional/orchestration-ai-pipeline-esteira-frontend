@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCircleAlert, lucideListChecks, lucideMonitor, lucideSearch, lucideServer, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
@@ -297,8 +297,13 @@ export class FatiasPage implements OnInit {
     }
   }
 
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.dominio.pararTempoReal());
+  }
+
   ngOnInit(): void {
     void this.dominio.carregar();
+    this.dominio.acompanharTempoReal();
   }
 
   protected escolherAplicacoes(ids: string[]): void {

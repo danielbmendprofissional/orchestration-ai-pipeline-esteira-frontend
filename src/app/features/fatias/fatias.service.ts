@@ -1,6 +1,9 @@
 import { Injectable, Injector, computed, inject, signal } from '@angular/core';
+import { Subscription, debounceTime, filter } from 'rxjs';
 import { FeatureFlagsService } from '../../core/config/feature-flags.service';
 import { codigoDoErro, errosDaResposta } from '../../core/http/erro-api';
+import { TempoRealService } from '../../core/tempo-real/tempo-real.service';
+import type { EventoTempoReal } from '../../core/tempo-real/tempo-real.tipos';
 import { FatiasApiService } from './fatias-api.service';
 import { textoDoMotivo } from './fatias.apresentacao';
 import type {
@@ -22,6 +25,8 @@ export const TAMANHO_PADRAO = 20;
 /** Flag das ações de decisão (botões e seção de Ações); a rota a declara em `data.featureAcoes`. */
 export const FLAG_DAS_ACOES = 'P2';
 export const COMENTARIO_MAXIMO = 2000;
+/** Eventos em rajada viram uma recarga só (T1). */
+export const DEBOUNCE_TEMPO_REAL_MS = 1000;
 
 /** Linha ou gaveta: o que os dois têm de decisão. Campos ausentes = flag desligada no backend. */
 export interface ComDecisao {
@@ -63,6 +68,8 @@ export interface MudancaDeFiltro {
 export class FatiasService {
   private readonly api = inject(FatiasApiService);
   private readonly injector = inject(Injector);
+  private readonly tempoReal = inject(TempoRealService);
+  private assinatura: Subscription | null = null;
 
   private readonly aba$ = signal<Aba>('andamento');
   private readonly filtro$ = signal<Omit<FiltroFatias, 'aba'>>({});
@@ -295,6 +302,52 @@ export class FatiasService {
       const codigo = codigoDoErro(erro);
       if (codigo) await this.carregar();
       return { ok: false, codigo, mensagem: errosDaResposta(erro)[0]?.message ?? null };
+    }
+  }
+
+  // tempo real (T1)
+
+  /**
+   * Liga o tempo real (no-op com `Features:T1` desligada) e recarrega a lista, e a gaveta aberta, quando chega evento
+   * de Aplicação em tela (ou recarga por reconexão/consulta). Rajada em 1 s = uma recarga; não passa pelo limite do Atualizar.
+   */
+  acompanharTempoReal(): void {
+    if (this.assinatura) return;
+    this.assinatura = this.tempoReal.eventos
+      .pipe(
+        filter((e) => this.emTela(e)),
+        debounceTime(DEBOUNCE_TEMPO_REAL_MS),
+      )
+      .subscribe(() => {
+        void this.carregar();
+        void this.recarregarGaveta();
+      });
+    this.tempoReal.iniciar();
+  }
+
+  pararTempoReal(): void {
+    if (!this.assinatura) return;
+    this.assinatura.unsubscribe();
+    this.assinatura = null;
+    this.tempoReal.parar();
+  }
+
+  private emTela(evento: EventoTempoReal): boolean {
+    if (evento.tipo === 'recarga') return true;
+    const ids = this.aplicacoes().map((a) => a.id);
+    return !this.lida() || ids.includes(evento.aplicacaoId);
+  }
+
+  /** Atualiza a gaveta aberta sem esvaziá-la nem mostrar carga; erro mantém o que já estava. */
+  private async recarregarGaveta(): Promise<void> {
+    const atual = this.gaveta$();
+    if (!atual) return;
+    const minha = ++this.consultaGaveta;
+    try {
+      const nova = await this.api.gaveta(atual.aplicacaoId, atual.codigo);
+      if (minha === this.consultaGaveta) this.gaveta$.set(nova);
+    } catch {
+      // mantém a gaveta atual
     }
   }
 
