@@ -25,8 +25,16 @@ export interface FatiasMudaram {
   aplicacaoId: string;
   fatiaCodigo?: string | null;
 }
+export interface EntregaAtualizada {
+  tipo: 'entrega.atualizada';
+  aplicacaoId: string;
+  entregaId: string;
+  fluxoId: string;
+  etapa: string;
+  estado: string;
+}
 /** Evento do servidor, tal como chega no SSE. */
-export type EventoDoServidor = AcaoAtualizada | PipelineAtualizada | FatiasMudaram;
+export type EventoDoServidor = AcaoAtualizada | PipelineAtualizada | FatiasMudaram | EntregaAtualizada;
 /** Gerado no cliente: reconexão ou consulta de 30 s. Pede recarga sem apontar Aplicação. */
 export interface Recarga {
   tipo: 'recarga';
@@ -42,4 +50,4 @@ export interface FonteDeEventos {
   close(): void;
 }
 
-export const TIPOS_DE_EVENTO = ['acao.atualizada', 'pipeline.atualizada', 'fatias.mudaram'] as const;
+export const TIPOS_DE_EVENTO = ['acao.atualizada', 'pipeline.atualizada', 'fatias.mudaram', 'entrega.atualizada'] as const;

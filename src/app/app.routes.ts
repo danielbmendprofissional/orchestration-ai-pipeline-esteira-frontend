@@ -51,6 +51,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/fatias/pages/fatias.page').then((m) => m.FatiasPage),
       },
       {
+        // Atrás do flag Features:E1b: desligado, a rota nem casa e a URL cai no Não encontrado. Sem item de menu (o menu é da E1a).
+        path: 'entregas/:id',
+        canMatch: [featureGuard],
+        title: 'Entrega — Esteira',
+        data: { feature: 'E1b' } satisfies RotaData,
+        loadComponent: () => import('./features/entregas/pages/entrega.page').then((m) => m.EntregaPage),
+      },
+      {
         path: 'sem-acesso',
         title: 'Sem acesso — Esteira',
         loadComponent: () => import('./layout/pages/sem-acesso.page').then((m) => m.SemAcessoPage),
