@@ -69,6 +69,14 @@
                 {
                   "replace": "src/app/features/fatias/components/tempo-real-dev.component.ts",
                   "with": "src/app/features/fatias/components/tempo-real-dev.component.preview.ts"
+                },
+                {
+                  "replace": "src/app/features/entregas/entregas-api.service.ts",
+                  "with": "src/app/features/entregas/entregas-api.service.preview.ts"
+                },
+                {
+                  "replace": "src/app/features/entregas/components/tempo-real-dev.component.ts",
+                  "with": "src/app/features/entregas/components/tempo-real-dev.component.preview.ts"
                 }
               ],
               "outputHashing": "all"
