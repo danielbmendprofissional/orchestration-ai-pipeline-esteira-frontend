@@ -6,12 +6,19 @@ import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import type { ResultadoComando } from '../aplicacoes.service';
-import type { ProjetoGitLabItem, ProjetoResumo } from '../aplicacoes.tipos';
+import type { ProjetoGitLabItem, ProjetoResumo, WebhookProjeto } from '../aplicacoes.tipos';
 
 export interface NovoProjeto {
   projetoGitLabId: number | string;
   stack: string;
 }
+
+const ROTULO_WEBHOOK: Record<string, string> = { pendente: 'Pendente', registrado: 'Registrado', falhou: 'Falhou' };
+const ERRO_WEBHOOK: Record<string, string> = {
+  'webhook.bot-nao-configurado': 'O bot da Esteira não está configurado para esse grupo.',
+  'webhook.sem-permissao': 'O bot não tem permissão para criar o webhook nesse projeto.',
+  'webhook.gitlab-indisponivel': 'O GitLab está indisponível no momento.',
+};
 
 /**
  * Aba Projetos: cadastrados (stack e dependências) e a gaveta "Adicionar projetos", que lista os do grupo do
@@ -40,6 +47,9 @@ export interface NovoProjeto {
             <th hlmTh>Projeto</th>
             <th hlmTh>Stack</th>
             <th hlmTh>Depende de</th>
+            @if (webhookVisivel()) {
+              <th hlmTh>Webhook</th>
+            }
           </tr>
         </thead>
         <tbody hlmTBody>
@@ -68,9 +78,33 @@ export interface NovoProjeto {
                   <span class="text-fg-muted">—</span>
                 }
               </td>
+              @if (webhookVisivel()) {
+                <td hlmTd>
+                  @if (p.webhook; as w) {
+                    <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span [class]="w.estado === 'falhou' ? 'font-medium text-bad-fg' : 'text-fg'">{{ rotuloWebhook(w) }}</span>
+                      @if (w.estado === 'falhou' && w.codigoErro) {
+                        <span class="text-fg-muted">{{ erroWebhook(w.codigoErro) }}</span>
+                      }
+                      @if (w.estado === 'falhou' && podeReexecutar()) {
+                        <button
+                          hlmBtn
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          [attr.aria-label]="'Reexecutar o registro do webhook de ' + p.caminho"
+                          (click)="reexecutarWebhook.emit(p.id ?? '')"
+                        >Reexecutar</button>
+                      }
+                    </span>
+                  } @else {
+                    <span class="text-fg-muted">Sem registro</span>
+                  }
+                </td>
+              }
             </tr>
           } @empty {
-            <tr hlmTr><td hlmTd colspan="3" class="text-fg-muted">Nenhum projeto cadastrado.</td></tr>
+            <tr hlmTr><td hlmTd [attr.colspan]="webhookVisivel() ? 4 : 3" class="text-fg-muted">Nenhum projeto cadastrado.</td></tr>
           }
         </tbody>
       </table>
@@ -126,6 +160,11 @@ export class ProjetosAbaComponent {
   readonly erro = input<string | null>(null);
   readonly cadastrar = input.required<(itens: NovoProjeto[]) => Promise<ResultadoComando>>();
 
+  /** T1: a coluna Webhook só existe com `Features:T1` ligado; Reexecutar, só para MOR (a page decide). */
+  readonly webhookVisivel = input(false);
+  readonly podeReexecutar = input(false);
+  readonly reexecutarWebhook = output<string>();
+
   readonly adicionar = output<void>();
   readonly alterarDependencias = output<{ projetoId: string; dependeDe: string[] }>();
 
@@ -135,7 +174,15 @@ export class ProjetosAbaComponent {
   protected readonly marcados = signal<ReadonlySet<number | string>>(new Set());
   private readonly stacks = signal<Record<string, string>>({});
 
-  protected disponiveis(): ProjetoGitLabItem[] {
+  protected rotuloWebhook(w: WebhookProjeto): string {
+    return ROTULO_WEBHOOK[w.estado] ?? w.estado;
+  }
+
+  protected erroWebhook(codigo: string): string {
+    return ERRO_WEBHOOK[codigo] ?? 'Não foi possível registrar o webhook no GitLab.';
+  }
+
+  protected disponiveis():ProjetoGitLabItem[] {
     return this.grupo().filter((g) => !g.cadastrado);
   }
 

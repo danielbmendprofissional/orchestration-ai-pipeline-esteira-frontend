@@ -19,6 +19,7 @@ import type {
   Politica,
   ProjetoGitLabItem,
   ProjetoResumo,
+  WebhookProjeto,
   VincularPapelRequest,
 } from './aplicacoes.tipos';
 
@@ -81,6 +82,11 @@ export class AplicacoesApiService {
 
   alterarAmbiente(projetoId: string, ambiente: string, habilitado: boolean): Promise<ProjetoResumo> {
     return firstValueFrom(this.http.put<ProjetoResumo>(`${PROJETOS}/${projetoId}/ambientes/${ambiente}`, { habilitado }));
+  }
+
+  /** T1: volta o registro do hook a `pendente` (só MOR; 409 `webhook.nao-reexecutavel` fora de `falhou`). */
+  reexecutarWebhook(projetoId: string): Promise<WebhookProjeto> {
+    return firstValueFrom(this.http.post<WebhookProjeto>(`${PROJETOS}/${projetoId}/webhook/reexecutar`, null));
   }
 
   criarDestino(projetoId: string, ambiente: string, pedido: DestinoRequest): Promise<Destino> {

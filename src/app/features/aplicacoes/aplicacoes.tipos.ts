@@ -16,6 +16,7 @@ export type PapelResumo = Esquemas['PapelResumoDto'];
 export type VincularPapelRequest = Esquemas['VincularPapelRequest'];
 export type PessoaLista = Esquemas['PessoaListaDto'];
 export type ProjetoResumo = Esquemas['ProjetoResumoDto'];
+export type WebhookProjeto = Esquemas['WebhookProjetoDto'];
 export type AmbienteProjeto = Esquemas['AmbienteProjetoDto'];
 export type Destino = Esquemas['DestinoDto'];
 export type DestinoRequest = Esquemas['DestinoRequest'];
