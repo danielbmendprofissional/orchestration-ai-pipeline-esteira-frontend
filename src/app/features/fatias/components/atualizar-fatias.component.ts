@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideRefreshCw } from '@ng-icons/lucide';
+import type { EstadoTempoReal } from '../../../core/tempo-real/tempo-real.tipos';
 import { horaDosDados } from '../fatias.apresentacao';
 
 /** "Atualizar" + frescor ("dados de HH:MM"). A região aria-live anuncia atualização em curso, dado antigo e o limite de atualização (10 s). */
@@ -20,6 +21,11 @@ import { horaDosDados } from '../fatias.apresentacao';
           dados de {{ hora() }}{{ desatualizado() ? ' · desatualizados' : '' }}
         }
       </span>
+      @if (rotuloTempoReal(); as rotulo) {
+        <span data-testid="tempo-real" aria-live="polite" class="inline-flex items-center gap-1.5 text-2xs text-fg-muted">
+          <span aria-hidden="true" class="size-1.5 rounded-full" [class]="tempoReal() === 'ao-vivo' ? 'bg-ok-fg' : 'bg-fg-dim'"></span>{{ rotulo }}
+        </span>
+      }
       <button
         type="button"
         data-testid="atualizar"
@@ -40,7 +46,22 @@ export class AtualizarFatiasComponent {
   readonly atualizando = input(false);
   /** O último Atualizar bateu no limite (`painel.atualizacao-recente`): aviso leve, não erro. */
   readonly recente = input(false);
+  /** Estado do tempo real (T1); `null` com o flag desligado ou o serviço parado: o indicador nem aparece. */
+  readonly tempoReal = input<EstadoTempoReal | null>(null);
   readonly atualizar = output<void>();
+
+  protected readonly rotuloTempoReal = computed(() => {
+    switch (this.tempoReal()) {
+      case 'ao-vivo':
+        return 'Ao vivo';
+      case 'reconectando':
+        return 'Reconectando…';
+      case 'consulta':
+        return 'Atualização a cada 30 s';
+      default:
+        return null;
+    }
+  });
 
   protected readonly hora = computed(() => horaDosDados(this.geradoEm()));
 }

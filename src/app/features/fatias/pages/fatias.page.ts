@@ -8,6 +8,7 @@ import { FatiasAvisosComponent } from '../components/fatias-avisos.component';
 import { FatiasPaginacaoComponent } from '../components/fatias-paginacao.component';
 import { FatiasTabelaComponent, type PedidoDeDecisao } from '../components/fatias-tabela.component';
 import { FiltroAplicacoesComponent } from '../components/filtro-aplicacoes.component';
+import { TempoRealDevComponent } from '../components/tempo-real-dev.component';
 import { AprovarDialogoComponent } from '../components/aprovar-dialogo.component';
 import type { ErroDaDecisao, MrParaAprovar } from '../components/decisao-dialogo.tipos';
 import { ReprovarDialogoComponent } from '../components/reprovar-dialogo.component';
@@ -41,6 +42,7 @@ const MAXIMO_RECENTES = 5;
     FatiasPaginacaoComponent,
     FatiasTabelaComponent,
     FiltroAplicacoesComponent,
+    TempoRealDevComponent,
     AprovarDialogoComponent,
     ReprovarDialogoComponent,
   ],
@@ -114,6 +116,7 @@ const MAXIMO_RECENTES = 5;
           [desatualizado]="dominio.desatualizado()"
           [atualizando]="dominio.atualizando()"
           [recente]="dominio.atualizacaoRecente()"
+          [tempoReal]="dominio.estadoTempoReal()"
           (atualizar)="dominio.atualizar()"
         />
       </div>
@@ -169,6 +172,8 @@ const MAXIMO_RECENTES = 5;
     </div>
 
     <p class="mt-4 text-2xs text-fg-muted">O estado das Fatias é lido do GitLab (mapa, spec, issues e MRs); ninguém o marca à mão.</p>
+
+    <est-tempo-real-dev [aplicacaoId]="dominio.aplicacoes()[0]?.id ?? null" />
 
     <est-fatia-gaveta
       [aberta]="selecionada() !== null"

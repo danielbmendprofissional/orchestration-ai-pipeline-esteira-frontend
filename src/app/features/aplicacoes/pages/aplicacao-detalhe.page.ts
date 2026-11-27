@@ -72,6 +72,9 @@ const ABAS = [
             [grupo]="dominio.projetosDoGrupo()"
             [erro]="dominio.erroDeProjetos()"
             [cadastrar]="cadastrarProjetos"
+            [webhookVisivel]="flags.isEnabled('T1')"
+            [podeReexecutar]="dominio.permissoes()?.podeEditar ?? false"
+            (reexecutarWebhook)="dominio.reexecutarWebhook($event)"
             (adicionar)="carregarGrupo()"
             (alterarDependencias)="dominio.substituirDependencias($event.projetoId, $event.dependeDe)"
           />

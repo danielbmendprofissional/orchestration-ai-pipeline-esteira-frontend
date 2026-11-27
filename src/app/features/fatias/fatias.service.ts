@@ -307,6 +307,9 @@ export class FatiasService {
 
   // tempo real (T1)
 
+  /** Estado para o indicador do Painel; `null` com o tempo real desligado (flag ausente) ou parado. */
+  readonly estadoTempoReal = computed(() => (this.tempoReal.ativo() ? this.tempoReal.estado() : null));
+
   /**
    * Liga o tempo real (no-op com `Features:T1` desligada) e recarrega a lista, e a gaveta aberta, quando chega evento
    * de Aplicação em tela (ou recarga por reconexão/consulta). Rajada em 1 s = uma recarga; não passa pelo limite do Atualizar.

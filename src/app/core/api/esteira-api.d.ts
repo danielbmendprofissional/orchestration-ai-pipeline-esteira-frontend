@@ -2134,6 +2134,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projetos/{id}/webhook/reexecutar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WebhookProjetoDto"];
+                        "application/json": components["schemas"]["WebhookProjetoDto"];
+                        "text/json": components["schemas"]["WebhookProjetoDto"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projetos/{id}/ambientes/{ambiente}": {
         parameters: {
             query?: never;
@@ -2892,6 +2942,7 @@ export interface components {
             ativo?: boolean;
             ambientes?: components["schemas"]["AmbienteProjetoDto"][];
             dependeDe?: string[];
+            webhook?: components["schemas"]["WebhookProjetoDto"];
         };
         ReprovarFatiaRequest: {
             comentario: null | string;
@@ -2912,6 +2963,12 @@ export interface components {
         VincularPapelRequest: {
             usuario: null | string;
             papel: null | string;
+        };
+        WebhookProjetoDto: {
+            estado: string;
+            codigoErro?: null | string;
+            /** Format: date-time */
+            atualizadaEm: string;
         };
         WorkspaceDto: {
             /** Format: int64 */

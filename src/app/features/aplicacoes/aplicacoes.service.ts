@@ -55,6 +55,7 @@ const ERROS_DE_CAMPO: Record<string, { campo: CampoDoForm; mensagem: string }> =
 const ERROS_GERAIS: Record<string, string> = {
   'projeto.dependencia-invalida':
     'Essa dependência não é válida: o projeto precisa ser da mesma aplicação, diferente dele mesmo e sem fechar ciclo.',
+  'webhook.nao-reexecutavel': 'O registro do webhook só pode ser reexecutado quando falhou. Atualize a página para ver o estado atual.',
   'politica.limite-negativo': 'O limite não pode ser negativo. Deixe em branco para não ter limite.',
   'politica.abaixo-do-minimo':
     'Isso fica abaixo do mínimo fixo: em qa, hml e produção o modo é bloqueia e Crítica e Alta ficam em 0. Só dá para endurecer.',
@@ -311,6 +312,13 @@ export class AplicacoesService {
 
   async substituirDependencias(projetoId: string, dependeDe: string[]): Promise<ResultadoComando> {
     return this.comandoDeProjeto(() => this.api.substituirDependencias(projetoId, dependeDe));
+  }
+
+  /** T1: o webhook do Projeto volta a `pendente`; o resto do Projeto fica como está. */
+  async reexecutarWebhook(projetoId: string): Promise<ResultadoComando> {
+    const projeto = this.detalhe$()?.projetos?.find((p) => p.id === projetoId);
+    if (!projeto) return { ok: false };
+    return this.comandoDeProjeto(async () => ({ ...projeto, webhook: await this.api.reexecutarWebhook(projetoId) }));
   }
 
   async alterarAmbiente(projetoId: string, ambiente: string, habilitado: boolean): Promise<ResultadoComando> {

@@ -17,6 +17,7 @@ import type {
   Politica,
   ProjetoGitLabItem,
   ProjetoResumo,
+  WebhookProjeto,
   VincularPapelRequest,
 } from './aplicacoes.tipos';
 
@@ -73,7 +74,10 @@ const GRUPO: ProjetoGitLabItem[] = [
 @Injectable({ providedIn: 'root' })
 export class AplicacoesApiService {
   private readonly dados: AplicacaoLista[] = APLICACOES.map((a) => ({ ...a }));
-  private readonly projetos: ProjetoResumo[] = [novoProjeto('p-api', 'valuto/api', 'dotnet'), novoProjeto('p-web', 'valuto/web', 'angular')];
+  private readonly projetos: ProjetoResumo[] = [
+    { ...novoProjeto('p-api', 'valuto/api', 'dotnet'), webhook: { estado: 'falhou', codigoErro: 'webhook.bot-nao-configurado', atualizadaEm: '2026-11-27T12:00:00Z' } },
+    { ...novoProjeto('p-web', 'valuto/web', 'angular'), webhook: { estado: 'registrado', atualizadaEm: '2026-11-27T12:00:00Z' } },
+  ];
   private readonly politicas: Politica[] = POLITICAS_INICIAIS();
   private papeis: PapelResumo[] = [{ id: 'pp-1', usuario: 'ana', nome: 'Ana Souza', email: 'ana@esteira.local', papel: 'analista' }];
   private workspace: AplicacaoDetalhe['workspace'] = undefined;
@@ -160,6 +164,12 @@ export class AplicacoesApiService {
     const alvo = projeto.ambientes?.find((a) => a.ambiente === ambiente);
     if (alvo && ambiente !== 'producao') alvo.habilitado = habilitado;
     return Promise.resolve(structuredClone(projeto));
+  }
+
+  reexecutarWebhook(projetoId: string): Promise<WebhookProjeto> {
+    const projeto = acharProjeto(this.projetos, projetoId);
+    projeto.webhook = { estado: 'pendente', atualizadaEm: new Date().toISOString() };
+    return Promise.resolve({ ...projeto.webhook });
   }
 
   criarDestino(projetoId: string, ambiente: string, pedido: DestinoRequest): Promise<Destino> {
