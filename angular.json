@@ -77,6 +77,10 @@
                 {
                   "replace": "src/app/features/entregas/components/tempo-real-dev.component.ts",
                   "with": "src/app/features/entregas/components/tempo-real-dev.component.preview.ts"
+                },
+                {
+                  "replace": "src/app/features/auditoria/auditoria-api.service.ts",
+                  "with": "src/app/features/auditoria/auditoria-api.service.preview.ts"
                 }
               ],
               "outputHashing": "all"
