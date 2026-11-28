@@ -4,6 +4,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { of } from 'rxjs';
 import { FeatureFlagsService } from '../../../core/config/feature-flags.service';
 import type { EstadoTempoReal } from '../../../core/tempo-real/tempo-real.tipos';
+import { AnalisesService } from '../analises.service';
 import { EntregasService } from '../entregas.service';
 import type { Entrega, EntregaEtapa, ErroDaEntrega } from '../entregas.tipos';
 import { EntregaPage } from './entrega.page';
@@ -49,6 +50,7 @@ describe('[E1b] EntregaPage', () => {
       providers: [
         provideRouter([]),
         { provide: EntregasService, useValue: servico },
+        { provide: AnalisesService, useValue: { habilitado: () => false, abrir: vi.fn(), fechar: vi.fn() } },
         { provide: FeatureFlagsService, useValue: { isEnabled: (c: string) => flags.has(c) } },
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: 'e1' })) } },
       ],
@@ -100,6 +102,7 @@ describe('[E1b] EntregaPage', () => {
       providers: [
         provideRouter([]),
         { provide: EntregasService, useValue: servico },
+        { provide: AnalisesService, useValue: { habilitado: () => false, abrir: vi.fn(), fechar: vi.fn() } },
         { provide: FeatureFlagsService, useValue: { isEnabled: (c: string) => flags.has(c) } },
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: 'e1' })) } },
       ],
