@@ -12,12 +12,13 @@ const APLICACAO = { id: '019a0000-0000-7000-8000-000000000001', nome: 'Valuto' }
 const ABERTA_EM = '2026-11-27T10:00:00Z';
 const GITLAB = 'https://gitlab.exemplo.local/valuto/valuto-api/-/pipelines';
 
-/** Ids de exemplo, na ordem: QA executando · HML aguardando aprovação · QA falhou · Atalho (QA e HML pulados). */
+/** Ids de exemplo, na ordem: QA executando · HML aguardando aprovação · QA falhou · Atalho (QA e HML pulados) · HML bloqueada pelo gate (E2). */
 export const ENTREGAS_DO_PREVIEW = [
   '019a0000-0000-7000-8000-0000000000e1',
   '019a0000-0000-7000-8000-0000000000e2',
   '019a0000-0000-7000-8000-0000000000e3',
   '019a0000-0000-7000-8000-0000000000e4',
+  '019a0000-0000-7000-8000-0000000000e5',
 ] as const;
 
 const etapa = (nome: string, estado: string, extra: Partial<EntregaEtapa> = {}): EntregaEtapa => ({
@@ -48,6 +49,9 @@ const estaticas = (): Entrega[] => [
       etapa('hml', 'pulada', { pulada: { por: 'Carla Mendes', motivo: 'falha no extrato de contas encerradas em produção' } }),
       etapa('prd', 'concluido', { pipelineUrl: `${GITLAB}/2833` }),
     ], []),
+  ]),
+  entrega(4, 'bloqueada-ou-falha', [
+    fluxo('f-e5-api', 'valuto-api', [etapa('abertura', 'concluido'), etapa('qa', 'concluido', { pipelineUrl: `${GITLAB}/2850` }), etapa('hml', 'bloqueada', { pipelineUrl: `${GITLAB}/2861` }), etapa('prd', 'nao-iniciado')], [{ codigo: 'E2', comFlag: true }]),
   ]),
 ];
 

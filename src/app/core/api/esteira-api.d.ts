@@ -4,6 +4,145 @@
  */
 
 export interface paths {
+    "/api/v1/entregas/{entregaId}/fluxos/{fluxoId}/etapas/{etapa}/analises": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    entregaId: string;
+                    fluxoId: string;
+                    etapa: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AnalisesDaEtapaDto"];
+                        "application/json": components["schemas"]["AnalisesDaEtapaDto"];
+                        "text/json": components["schemas"]["AnalisesDaEtapaDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/entregas/{entregaId}/fluxos/{fluxoId}/analises/{analiseId}/achados": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    severidade?: string;
+                };
+                header?: never;
+                path: {
+                    entregaId: string;
+                    fluxoId: string;
+                    analiseId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["AchadoDto"][];
+                        "application/json": components["schemas"]["AchadoDto"][];
+                        "text/json": components["schemas"]["AchadoDto"][];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/aplicacoes": {
         parameters: {
             query?: never;
@@ -2961,6 +3100,15 @@ export interface components {
             /** Format: int64 */
             mrIid: number | string;
         };
+        AchadoDto: {
+            severidade: string;
+            titulo: string;
+            regraId: null | string;
+            arquivo: null | string;
+            /** Format: int32 */
+            linha: null | number | string;
+            descricao: null | string;
+        };
         AcoesDaFatiaDto: {
             podeAbrirReview: components["schemas"]["PermissaoDaAcaoDto"];
             podeAprovar: components["schemas"]["PermissaoDaAcaoDto"];
@@ -2998,6 +3146,24 @@ export interface components {
             ambiente?: string;
             habilitado?: boolean;
             destinos?: components["schemas"]["DestinoDto"][];
+        };
+        AnaliseDaEtapaDto: {
+            /** Format: uuid */
+            id: string;
+            escopo: string;
+            fonte: string;
+            tipo: string;
+            veredito: string;
+            destino: null | string;
+            /** Format: double */
+            custoUsd: null | number | string;
+            /** Format: date-time */
+            recebidaEm: string;
+            contagem: components["schemas"]["ContagemDaAnaliseDto"];
+        };
+        AnalisesDaEtapaDto: {
+            gate: null | components["schemas"]["DecisaoDaEtapaDto"];
+            analises: components["schemas"]["AnaliseDaEtapaDto"][];
         };
         AplicacaoDetalheDto: {
             /** Format: uuid */
@@ -3047,10 +3213,40 @@ export interface components {
             projetoGitLabId: null | number | string;
             stack: null | string;
         };
+        ContagemDaAnaliseDto: {
+            /** Format: int32 */
+            critica: number | string;
+            /** Format: int32 */
+            alta: number | string;
+            /** Format: int32 */
+            media: number | string;
+            /** Format: int32 */
+            baixa: number | string;
+            /** Format: int32 */
+            info: number | string;
+        };
+        ContagemDto: {
+            /** Format: int32 */
+            critica: number | string;
+            /** Format: int32 */
+            alta: number | string;
+            /** Format: int32 */
+            media: number | string;
+            /** Format: int32 */
+            baixa: number | string;
+        };
         CriarAplicacaoRequest: {
             nome: null | string;
             sigla: null | string;
             grupoGitLab: null | string;
+        };
+        DecisaoDaEtapaDto: {
+            momento: string;
+            decisao: string;
+            motivo: null | string;
+            contagem: components["schemas"]["ContagemDto"];
+            /** Format: date-time */
+            decididaEm: string;
         };
         DefinirTetoCustoRequest: {
             /** Format: double */
