@@ -15,6 +15,7 @@ import type {
   PermissoesGlobais,
   PessoaLista,
   Politica,
+  TetoCusto,
   ProjetoGitLabItem,
   ProjetoResumo,
   WebhookProjeto,
@@ -32,7 +33,9 @@ const APLICACOES: AplicacaoLista[] = [
   { id: '019a0000-0000-7000-8000-000000000002', nome: 'Portal do Cliente', sigla: 'PCL', grupo: 'portal-cliente', quantidadeProjetos: 2, ativa: true },
 ];
 
-const PERMISSOES: PermissoesAplicacao = { podeEditar: true, podeEditarCadastro: true, podeEditarPolitica: true, podeGerenciarPapeis: true };
+const PERMISSOES: PermissoesAplicacao = { podeEditar: true, podeEditarCadastro: true, podeEditarPolitica: true, podeGerenciarPapeis: true, podeEditarTetoCusto: true };
+
+const TETO_PADRAO_USD = 2;
 
 const AMBIENTES = ['qa', 'hml', 'producao'] as const;
 const novoProjeto = (id: string, caminho: string, stack: string): ProjetoResumo => ({
@@ -81,6 +84,8 @@ export class AplicacoesApiService {
   private readonly politicas: Politica[] = POLITICAS_INICIAIS();
   private papeis: PapelResumo[] = [{ id: 'pp-1', usuario: 'ana', nome: 'Ana Souza', email: 'ana@esteira.local', papel: 'analista' }];
   private workspace: AplicacaoDetalhe['workspace'] = undefined;
+  /** X3: a primeira Aplicação tem teto definido, a segunda usa o padrão da Esteira. */
+  private readonly tetos = new Map<string, number>([[APLICACOES[0].id!, 5]]);
   private contador = 0;
 
   listar(filtro: FiltroApi, pedido: PedidoDePagina): Promise<Pagina<AplicacaoLista>> {
@@ -110,7 +115,7 @@ export class AplicacoesApiService {
   obter(id: string): Promise<AplicacaoDetalhe> {
     const a = this.dados.find((x) => x.id === id);
     if (!a) return Promise.reject(new Error('Aplicação do preview não encontrada.'));
-    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, ...(this.workspace ? { workspace: { ...this.workspace } } : {}), politicas: structuredClone(this.politicas), projetos: this.projetos.map((p) => structuredClone(p)), papeis: structuredClone(this.papeis) });
+    return Promise.resolve({ id: a.id, nome: a.nome, sigla: a.sigla, grupo: a.grupo, ativa: a.ativa, ...(this.workspace ? { workspace: { ...this.workspace } } : {}), tetoCusto: this.tetoDe(id), politicas: structuredClone(this.politicas), projetos: this.projetos.map((p) => structuredClone(p)), papeis: structuredClone(this.papeis) });
   }
 
   criar(pedido: CriarAplicacaoRequest): Promise<AplicacaoLista> {
@@ -137,6 +142,17 @@ export class AplicacoesApiService {
     void id;
     const cadastrados = new Set(this.projetos.map((p) => p.caminho));
     return Promise.resolve(GRUPO.map((g) => ({ ...g, cadastrado: cadastrados.has(g.caminho ?? '') })));
+  }
+
+  private readonly tetoDe = (id: string): TetoCusto => {
+    const definido = this.tetos.get(id);
+    return { ...(definido === undefined ? {} : { tetoCustoUsd: definido }), padraoUsd: TETO_PADRAO_USD, efetivoUsd: definido ?? TETO_PADRAO_USD };
+  };
+
+  definirTetoCusto(id: string, tetoCustoUsd: number | null): Promise<TetoCusto> {
+    if (tetoCustoUsd === null) this.tetos.delete(id);
+    else this.tetos.set(id, tetoCustoUsd);
+    return Promise.resolve(this.tetoDe(id));
   }
 
   definirWorkspace(id: string, projetoGitLabId: number | string | null): Promise<void> {

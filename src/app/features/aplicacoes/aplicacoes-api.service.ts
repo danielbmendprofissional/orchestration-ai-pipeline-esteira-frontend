@@ -16,6 +16,7 @@ import type {
   PermissoesAplicacao,
   PermissoesGlobais,
   PessoaLista,
+  TetoCusto,
   Politica,
   ProjetoGitLabItem,
   ProjetoResumo,
@@ -70,6 +71,11 @@ export class AplicacoesApiService {
 
   async definirWorkspace(id: string, projetoGitLabId: number | string | null): Promise<void> {
     await firstValueFrom(this.http.put<void>(`${BASE}/${id}/workspace`, { projetoGitLabId }));
+  }
+
+  /** X3: `null` volta ao padrão da Esteira. A resposta omite `tetoCustoUsd` quando não definido. */
+  definirTetoCusto(id: string, tetoCustoUsd: number | null): Promise<TetoCusto> {
+    return firstValueFrom(this.http.put<TetoCusto>(`${BASE}/${id}/teto-custo`, { tetoCustoUsd }));
   }
 
   cadastrarProjeto(id: string, pedido: CadastrarProjetoRequest): Promise<ProjetoResumo> {

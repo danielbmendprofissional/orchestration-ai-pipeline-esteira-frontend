@@ -20,7 +20,7 @@ const detalhe = (): AplicacaoDetalhe => ({
     projeto('p4', 'docs'),
   ],
 });
-const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v });
+const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v, podeEditarTetoCusto: v });
 
 describe('[T1] AplicacaoDetalhePage: estado do webhook do Projeto', () => {
   let api: Record<string, ReturnType<typeof vi.fn>>;

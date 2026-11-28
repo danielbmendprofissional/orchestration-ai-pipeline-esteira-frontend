@@ -25,7 +25,7 @@ const detalhe = (): AplicacaoDetalhe => ({
     { id: 'pp3', usuario: 's2', nome: 'Beto Lima', email: 'beto@x', papel: 'aprovador-tecnico' },
   ],
 });
-const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v });
+const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v, podeEditarTetoCusto: v });
 const erroDaApi = (code: string) => new HttpErrorResponse({ status: 422, error: { errors: [{ code, message: 'msg', type: 'Validation' }] } });
 
 describe('[A1] AplicacaoDetalhePage — abas Política de segurança e Pessoas e papéis', () => {

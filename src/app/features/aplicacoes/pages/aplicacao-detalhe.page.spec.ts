@@ -12,6 +12,7 @@ const permissoes = (v: boolean): PermissoesAplicacao => ({
   podeEditarCadastro: v,
   podeEditarPolitica: v,
   podeGerenciarPapeis: v,
+  podeEditarTetoCusto: v,
 });
 const erroDaApi = (code: string, status = 422) =>
   new HttpErrorResponse({ status, error: { errors: [{ code, message: 'msg da API', type: 'Validation' }] } });
