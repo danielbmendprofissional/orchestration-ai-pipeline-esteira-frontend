@@ -1228,6 +1228,122 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/entregas/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["EntregaDto"];
+                        "application/json": components["schemas"]["EntregaDto"];
+                        "text/json": components["schemas"]["EntregaDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/eventos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/fatias": {
         parameters: {
             query?: never;
@@ -2134,56 +2250,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/projetos/{id}/webhook/reexecutar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["WebhookProjetoDto"];
-                        "application/json": components["schemas"]["WebhookProjetoDto"];
-                        "text/json": components["schemas"]["WebhookProjetoDto"];
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["RespostaDeErro"];
-                        "application/json": components["schemas"]["RespostaDeErro"];
-                        "text/json": components["schemas"]["RespostaDeErro"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/projetos/{id}/ambientes/{ambiente}": {
         parameters: {
             query?: never;
@@ -2556,6 +2622,89 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projetos/{id}/webhook/reexecutar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["WebhookProjetoDto"];
+                        "application/json": components["schemas"]["WebhookProjetoDto"];
+                        "text/json": components["schemas"]["WebhookProjetoDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/usuarios/me": {
         parameters: {
             query?: never;
@@ -2598,6 +2747,72 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/webhooks/gitlab": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Payload Too Large */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -2749,10 +2964,34 @@ export interface components {
             /** Format: int32 */
             ordem: null | number | string;
         };
+        EntregaDto: {
+            /** Format: uuid */
+            id: string;
+            aplicacao: components["schemas"]["IdNomeDto"];
+            abertaPor: components["schemas"]["NomeDto"];
+            /** Format: date-time */
+            abertaEm: string;
+            estado: string;
+            vezDe: null | string;
+            fluxos: components["schemas"]["FluxoDaEntregaDto"][];
+        };
         ErroNaResposta: {
             code: string;
             message: string;
             type: string;
+        };
+        EtapaDto: {
+            etapa: string;
+            estado: string;
+            codigoFalha: null | string;
+            pulada: null | components["schemas"]["PuladaDto"];
+            pipelineUrl: null | string;
+            /** Format: date-time */
+            atualizadaEm: string;
+        };
+        FatiaDaEntregaDto: {
+            codigo: string;
+            comFlag: boolean;
         };
         FatiaDoPainelDto: {
             /** Format: uuid */
@@ -2773,6 +3012,15 @@ export interface components {
             acoes?: null | components["schemas"]["AcoesDaFatiaDto"];
             review?: null | components["schemas"]["ReviewDaFatiaDto"];
             decisao?: null | string;
+        };
+        FluxoDaEntregaDto: {
+            /** Format: uuid */
+            id: string;
+            projeto: components["schemas"]["IdNomeDto"];
+            tipoMudanca: string;
+            sha: null | string;
+            fatias: components["schemas"]["FatiaDaEntregaDto"][];
+            etapas: components["schemas"]["EtapaDto"][];
         };
         GavetaDto: {
             /** Format: uuid */
@@ -2861,6 +3109,14 @@ export interface components {
             branch: string;
             link: null | string;
         };
+        IdNomeDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+        };
+        NomeDto: {
+            nome: string;
+        };
         PainelListaDto: {
             itens: components["schemas"]["FatiaDoPainelDto"][];
             /** Format: int32 */
@@ -2942,7 +3198,11 @@ export interface components {
             ativo?: boolean;
             ambientes?: components["schemas"]["AmbienteProjetoDto"][];
             dependeDe?: string[];
-            webhook?: components["schemas"]["WebhookProjetoDto"];
+            webhook?: null | components["schemas"]["WebhookProjetoDto"];
+        };
+        PuladaDto: {
+            por: null | string;
+            motivo: null | string;
         };
         ReprovarFatiaRequest: {
             comentario: null | string;
@@ -2965,10 +3225,10 @@ export interface components {
             papel: null | string;
         };
         WebhookProjetoDto: {
-            estado: string;
+            estado?: string;
             codigoErro?: null | string;
             /** Format: date-time */
-            atualizadaEm: string;
+            atualizadaEm?: string;
         };
         WorkspaceDto: {
             /** Format: int64 */

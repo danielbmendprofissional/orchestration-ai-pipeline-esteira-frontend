@@ -175,7 +175,8 @@ export class ProjetosAbaComponent {
   private readonly stacks = signal<Record<string, string>>({});
 
   protected rotuloWebhook(w: WebhookProjeto): string {
-    return ROTULO_WEBHOOK[w.estado] ?? w.estado;
+    const estado = w.estado ?? '';
+    return ROTULO_WEBHOOK[estado] ?? estado;
   }
 
   protected erroWebhook(codigo: string): string {
