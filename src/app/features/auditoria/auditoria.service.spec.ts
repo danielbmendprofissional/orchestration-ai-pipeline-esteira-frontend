@@ -153,6 +153,7 @@ describe('[X1] AuditoriaService', () => {
     expect(destinoDoObjeto(objeto('Aplicacao'))).toEqual(['/aplicacoes', 'id-1']);
     expect(destinoDoObjeto(objeto('Entrega'))).toEqual(['/entregas', 'id-1']);
     expect(destinoDoObjeto(objeto('Fatia'))).toEqual(['/fatias']);
+    expect(destinoDoObjeto(objeto('AcaoBot'))).toEqual(['/fatias']);
     expect(destinoDoObjeto(objeto('Destino'))).toBeNull();
   });
 });

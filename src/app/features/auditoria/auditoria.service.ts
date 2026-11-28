@@ -29,7 +29,8 @@ export function destinoDoObjeto(objeto: ObjetoDoRegistro): string[] | null {
   switch (objeto.entidade) {
     case 'Aplicacao': return ['/aplicacoes', objeto.entidadeId];
     case 'Entrega': return ['/entregas', objeto.entidadeId];
-    case 'Fatia': return ['/fatias'];
+    case 'Fatia':
+    case 'AcaoBot': return ['/fatias']; // as Ações do bot gravam a entidade AcaoBot, com o código da Fatia no objeto
     default: return null;
   }
 }
