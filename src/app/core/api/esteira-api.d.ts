@@ -317,7 +317,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/aplicacoes/{id}/teto-custo": {
+    "/api/v1/aplicacoes/{id}/workspace": {
         parameters: {
             query?: never;
             header?: never;
@@ -336,23 +336,19 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json-patch+json": components["schemas"]["DefinirTetoCustoRequest"];
-                    "application/json": components["schemas"]["DefinirTetoCustoRequest"];
-                    "text/json": components["schemas"]["DefinirTetoCustoRequest"];
-                    "application/*+json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "application/json-patch+json": components["schemas"]["DefinirWorkspaceRequest"];
+                    "application/json": components["schemas"]["DefinirWorkspaceRequest"];
+                    "text/json": components["schemas"]["DefinirWorkspaceRequest"];
+                    "application/*+json": components["schemas"]["DefinirWorkspaceRequest"];
                 };
             };
             responses: {
-                /** @description OK */
-                200: {
+                /** @description No Content */
+                204: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content: {
-                        "text/plain": components["schemas"]["TetoCustoDto"];
-                        "application/json": components["schemas"]["TetoCustoDto"];
-                        "text/json": components["schemas"]["TetoCustoDto"];
-                    };
+                    content?: never;
                 };
                 /** @description Bad Request */
                 400: {
@@ -429,7 +425,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/aplicacoes/{id}/workspace": {
+    "/api/v1/aplicacoes/{id}/teto-custo": {
         parameters: {
             query?: never;
             header?: never;
@@ -448,19 +444,23 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json-patch+json": components["schemas"]["DefinirWorkspaceRequest"];
-                    "application/json": components["schemas"]["DefinirWorkspaceRequest"];
-                    "text/json": components["schemas"]["DefinirWorkspaceRequest"];
-                    "application/*+json": components["schemas"]["DefinirWorkspaceRequest"];
+                    "application/json-patch+json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "application/json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "text/json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "application/*+json": components["schemas"]["DefinirTetoCustoRequest"];
                 };
             };
             responses: {
-                /** @description No Content */
-                204: {
+                /** @description OK */
+                200: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "text/plain": components["schemas"]["TetoCustoDto"];
+                        "application/json": components["schemas"]["TetoCustoDto"];
+                        "text/json": components["schemas"]["TetoCustoDto"];
+                    };
                 };
                 /** @description Bad Request */
                 400: {
@@ -3007,10 +3007,10 @@ export interface components {
             grupo?: string;
             ativa?: boolean;
             workspace?: null | components["schemas"]["WorkspaceDto"];
-            tetoCusto?: components["schemas"]["TetoCustoDto"];
             politicas?: components["schemas"]["PoliticaDto"][];
             projetos?: components["schemas"]["ProjetoResumoDto"][];
             papeis?: components["schemas"]["PapelResumoDto"][];
+            tetoCusto?: components["schemas"]["TetoCustoDto"];
         };
         AplicacaoDoPainelDto: {
             /** Format: uuid */
@@ -3054,7 +3054,7 @@ export interface components {
         };
         DefinirTetoCustoRequest: {
             /** Format: double */
-            tetoCustoUsd: null | number;
+            tetoCustoUsd: null | number | string;
         };
         DefinirWorkspaceRequest: {
             /** Format: int64 */
@@ -3332,6 +3332,14 @@ export interface components {
             estado: string;
             link: null | string;
         };
+        TetoCustoDto: {
+            /** Format: double */
+            tetoCustoUsd?: null | number | string;
+            /** Format: double */
+            padraoUsd?: number | string;
+            /** Format: double */
+            efetivoUsd?: number | string;
+        };
         UsuarioLogadoDto: {
             usuario: string;
             nome: string;
@@ -3347,14 +3355,6 @@ export interface components {
             codigoErro?: null | string;
             /** Format: date-time */
             atualizadaEm?: string;
-        };
-        TetoCustoDto: {
-            /** Format: double */
-            tetoCustoUsd?: null | number;
-            /** Format: double */
-            padraoUsd?: number;
-            /** Format: double */
-            efetivoUsd?: number;
         };
         WorkspaceDto: {
             /** Format: int64 */
