@@ -11,6 +11,7 @@ import { AplicacoesService, type FormDestino } from '../aplicacoes.service';
 import type { AlterarPoliticaRequest, ProjetoGitLabItem } from '../aplicacoes.tipos';
 import { FeatureFlagsService } from '../../../core/config/feature-flags.service';
 import { WorkspaceCampoComponent } from '../components/workspace-campo.component';
+import { TetoCustoCampoComponent } from '../components/teto-custo-campo.component';
 
 const ABAS = [
   { id: 'cadastro', rotulo: 'Cadastro' },
@@ -23,7 +24,7 @@ const ABAS = [
 @Component({
   selector: 'est-aplicacao-detalhe-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent, PoliticaAbaComponent, PessoasAbaComponent, WorkspaceCampoComponent],
+  imports: [RouterLink, HlmButtonImports, HlmTabsImports, AplicacaoGavetaComponent, ProjetosAbaComponent, AmbientesAbaComponent, PoliticaAbaComponent, PessoasAbaComponent, WorkspaceCampoComponent, TetoCustoCampoComponent],
   template: `
     @if (dominio.naoEncontrada()) {
       <h1 class="text-3xl font-semibold tracking-tight text-fg">Aplicação não encontrada</h1>
@@ -62,6 +63,9 @@ const ABAS = [
               [definir]="definirWorkspace"
               (carregar)="carregarGrupo()"
             />
+          }
+          @if (flags.isEnabled('X3')) {
+            <est-teto-custo-campo [teto]="a.tetoCusto" [podeEditar]="dominio.podeEditarTetoCusto()" [definir]="definirTetoCusto" />
           }
         </div>
 
@@ -124,6 +128,7 @@ export class AplicacaoDetalhePage {
   protected readonly flags = inject(FeatureFlagsService);
   protected readonly definirWorkspace = (projeto: ProjetoGitLabItem | null) =>
     this.dominio.definirWorkspace(this.dominio.detalhe()?.id ?? '', projeto);
+  protected readonly definirTetoCusto = (valor: number | null) => this.dominio.definirTetoCusto(this.dominio.detalhe()?.id ?? '', valor);
   protected readonly abas = ABAS;
   protected readonly aba = signal<string>('cadastro');
   protected readonly gavetaAberta = signal(false);
