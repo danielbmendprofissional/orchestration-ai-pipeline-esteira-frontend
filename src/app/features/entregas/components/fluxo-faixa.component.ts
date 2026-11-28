@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronRight, lucideCircleCheck, lucideCircleDashed, lucideCircleHelp, lucideCircleX, lucideClock, lucideLoaderCircle, lucideSkipForward } from '@ng-icons/lucide';
+import { lucideChevronRight, lucideCircleCheck, lucideCircleDashed, lucideCircleHelp, lucideCircleX, lucideClock, lucideLoaderCircle, lucideLock, lucideSkipForward } from '@ng-icons/lucide';
 import { CLASSES_DO_TOM, ETAPAS_DO_FLUXO, nomeDaEtapa, rotuloDaEtapa } from '../entregas.apresentacao';
 import type { EntregaFluxo } from '../entregas.tipos';
 
@@ -12,7 +12,7 @@ import type { EntregaFluxo } from '../entregas.tipos';
   selector: 'est-fluxo-faixa',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgIcon],
-  providers: [provideIcons({ lucideChevronRight, lucideCircleCheck, lucideCircleDashed, lucideCircleHelp, lucideCircleX, lucideClock, lucideLoaderCircle, lucideSkipForward })],
+  providers: [provideIcons({ lucideChevronRight, lucideCircleCheck, lucideCircleDashed, lucideCircleHelp, lucideCircleX, lucideClock, lucideLoaderCircle, lucideLock, lucideSkipForward })],
   template: `
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <h2 class="text-lg font-semibold text-fg">{{ fluxo().projeto.nome }}</h2>

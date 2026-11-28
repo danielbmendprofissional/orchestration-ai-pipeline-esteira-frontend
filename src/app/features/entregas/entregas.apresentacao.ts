@@ -22,6 +22,7 @@ const ETAPA: Record<string, RotuloDeEstado> = {
   concluido: { texto: 'Concluído', icone: 'lucideCircleCheck', tom: 'verde' },
   pulada: { texto: 'Pulada', icone: 'lucideSkipForward', tom: 'neutro' },
   falhou: { texto: 'Falhou', icone: 'lucideCircleX', tom: 'vermelho' },
+  bloqueada: { texto: 'Bloqueada', icone: 'lucideLock', tom: 'vermelho' },
 };
 const ENTREGA: Record<string, RotuloDeEstado> = {
   'bloqueada-ou-falha': { texto: 'Bloqueada ou com falha', icone: 'lucideCircleX', tom: 'vermelho' },

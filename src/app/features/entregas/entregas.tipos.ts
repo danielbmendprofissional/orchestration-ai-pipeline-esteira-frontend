@@ -10,7 +10,7 @@ export type EntregaFatia = Esquemas['FatiaDaEntregaDto'];
 
 /** Valores que a API devolve em `etapa` e `estado` (string solta no OpenAPI): ADR-0023. */
 export type NomeDaEtapa = 'abertura' | 'qa' | 'hml' | 'prd';
-export type EstadoDaEtapa = 'nao-iniciado' | 'executando' | 'aguardando-aprovacao' | 'concluido' | 'pulada' | 'falhou';
+export type EstadoDaEtapa = 'nao-iniciado' | 'executando' | 'aguardando-aprovacao' | 'concluido' | 'pulada' | 'falhou' | 'bloqueada';
 export type EstadoDaEntrega = 'bloqueada-ou-falha' | 'aguardando-aprovacao' | 'em-andamento';
 
 export type ErroDaEntrega = 'nao-encontrada' | 'falha';
