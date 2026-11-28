@@ -425,6 +425,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/aplicacoes/{id}/teto-custo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json-patch+json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "application/json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "text/json": components["schemas"]["DefinirTetoCustoRequest"];
+                    "application/*+json": components["schemas"]["DefinirTetoCustoRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["TetoCustoDto"];
+                        "application/json": components["schemas"]["TetoCustoDto"];
+                        "text/json": components["schemas"]["TetoCustoDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/aplicacoes/{id}/gitlab/projetos": {
         parameters: {
             query?: never;
@@ -2898,6 +3010,7 @@ export interface components {
             politicas?: components["schemas"]["PoliticaDto"][];
             projetos?: components["schemas"]["ProjetoResumoDto"][];
             papeis?: components["schemas"]["PapelResumoDto"][];
+            tetoCusto?: components["schemas"]["TetoCustoDto"];
         };
         AplicacaoDoPainelDto: {
             /** Format: uuid */
@@ -2938,6 +3051,10 @@ export interface components {
             nome: null | string;
             sigla: null | string;
             grupoGitLab: null | string;
+        };
+        DefinirTetoCustoRequest: {
+            /** Format: double */
+            tetoCustoUsd: null | number | string;
         };
         DefinirWorkspaceRequest: {
             /** Format: int64 */
@@ -3150,6 +3267,7 @@ export interface components {
             podeEditarCadastro: boolean;
             podeEditarPolitica: boolean;
             podeGerenciarPapeis: boolean;
+            podeEditarTetoCusto: boolean;
         };
         PermissoesGlobaisAplicacao: {
             podeCriar: boolean;
@@ -3213,6 +3331,14 @@ export interface components {
         ReviewDaFatiaDto: {
             estado: string;
             link: null | string;
+        };
+        TetoCustoDto: {
+            /** Format: double */
+            tetoCustoUsd?: null | number | string;
+            /** Format: double */
+            padraoUsd?: number | string;
+            /** Format: double */
+            efetivoUsd?: number | string;
         };
         UsuarioLogadoDto: {
             usuario: string;

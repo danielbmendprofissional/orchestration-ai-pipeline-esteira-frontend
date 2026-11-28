@@ -21,6 +21,7 @@ export type AmbienteProjeto = Esquemas['AmbienteProjetoDto'];
 export type Destino = Esquemas['DestinoDto'];
 export type DestinoRequest = Esquemas['DestinoRequest'];
 export type ProjetoGitLabItem = Esquemas['ProjetoGitLabItemDto'];
+export type TetoCusto = Esquemas['TetoCustoDto'];
 export type CadastrarProjetoRequest = Esquemas['CadastrarProjetoRequest'];
 
 export type ColunaOrdenavel = 'nome' | 'sigla' | 'grupo' | 'quantidadeProjetos' | 'ativa';

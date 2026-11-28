@@ -7,7 +7,7 @@ import { AplicacoesApiService } from '../aplicacoes-api.service';
 import type { AplicacaoDetalhe, PermissoesAplicacao } from '../aplicacoes.tipos';
 import { AplicacaoDetalhePage } from './aplicacao-detalhe.page';
 
-const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v });
+const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v, podeEditarTetoCusto: v });
 const erroDaApi = (code: string, status = 422) =>
   new HttpErrorResponse({ status, error: { errors: [{ code, message: 'msg da API', type: 'Validation' }] } });
 const base = (): AplicacaoDetalhe => ({ id: 'a1', nome: 'Valuto', sigla: 'VLT', grupo: 'valuto', ativa: true });

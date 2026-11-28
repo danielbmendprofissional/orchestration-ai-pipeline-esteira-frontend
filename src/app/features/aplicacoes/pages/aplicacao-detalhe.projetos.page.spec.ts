@@ -27,7 +27,7 @@ const detalhe = (): AplicacaoDetalhe => ({
   papeis: [],
   projetos: [projeto('p1', 'api'), projeto('p2', 'web', { stack: 'angular' })],
 });
-const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v });
+const permissoes = (v: boolean): PermissoesAplicacao => ({ podeEditar: v, podeEditarCadastro: v, podeEditarPolitica: v, podeGerenciarPapeis: v, podeEditarTetoCusto: v });
 const erroDaApi = (code: string) => new HttpErrorResponse({ status: 422, error: { errors: [{ code, message: 'msg', type: 'Validation' }] } });
 
 describe('[A1] AplicacaoDetalhePage — abas Projetos e Ambientes e destinos', () => {

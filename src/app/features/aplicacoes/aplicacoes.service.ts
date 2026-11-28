@@ -35,7 +35,7 @@ export interface FormEdicaoAplicacao {
 }
 
 /** Erro de negócio que cabe num campo vem com `campo` e `mensagem`; outro erro já virou toast no interceptor. */
-export type ResultadoComando = { ok: true } | { ok: false; campo?: CampoDoForm | 'workspace'; mensagem?: string };
+export type ResultadoComando = { ok: true } | { ok: false; campo?: CampoDoForm | 'workspace' | 'tetoCusto'; mensagem?: string };
 
 /** Códigos estáveis da API (ADR-0003) que a gaveta mostra junto do campo (A1, critérios 2 a 4). */
 const ERROS_DE_CAMPO: Record<string, { campo: CampoDoForm; mensagem: string }> = {
@@ -70,6 +70,11 @@ const ERROS_DO_WORKSPACE: Record<string, string> = {
   'aplicacao.workspace-fora-do-grupo': 'Esse projeto não pertence ao grupo do GitLab da aplicação.',
   'aplicacao.workspace-e-projeto': 'Esse projeto já está cadastrado como projeto da aplicação e não pode ser o workspace.',
   'aplicacao.workspace-nao-encontrado': 'Projeto não encontrado no GitLab. Atualize a lista e escolha de novo.',
+};
+/** Recusas do teto de custo dos agentes (X3, critérios 2 e 11): sempre junto do campo, em pt-BR. */
+const ERROS_DO_TETO_CUSTO: Record<string, string> = {
+  'aplicacao.teto-invalido': 'O teto precisa ficar entre 0,10 e 50,00 dólares, com no máximo duas casas decimais.',
+  'aplicacao.conflito-de-gravacao': 'Outra pessoa alterou essa aplicação ao mesmo tempo. Recarregue a página e tente de novo.',
 };
 const ERRO_GITLAB_DO_WORKSPACE = 'Não foi possível falar com o GitLab agora. Tente de novo em instantes.';
 
@@ -122,6 +127,8 @@ export class AplicacoesService {
 
   readonly detalhe = this.detalhe$.asReadonly();
   readonly permissoes = this.permissoes$.asReadonly();
+  /** X3: só o que a API devolveu em `/permissoes`; nenhuma regra de papel aqui. */
+  readonly podeEditarTetoCusto = computed(() => this.permissoes$()?.podeEditarTetoCusto === true);
   readonly naoEncontrada = this.inexistente.asReadonly();
   readonly carregandoDetalhe = this.carregandoDetalhe$.asReadonly();
 
@@ -288,6 +295,19 @@ export class AplicacoesService {
       return projeto ? { ...resto, workspace: { projetoGitLabId: projeto.projetoGitLabId, caminho: projeto.caminho } } : resto;
     });
     return { ok: true };
+  }
+
+  /** `null` volta ao padrão da Esteira. Depois do 200 o detalhe guarda o teto devolvido pela API. */
+  async definirTetoCusto(aplicacaoId: string, tetoCustoUsd: number | null): Promise<ResultadoComando> {
+    try {
+      const teto = await this.api.definirTetoCusto(aplicacaoId, tetoCustoUsd);
+      this.detalhe$.update((d) => (d ? { ...d, tetoCusto: teto } : d));
+      return { ok: true };
+    } catch (erro) {
+      const codigo = codigoDoErro(erro);
+      const mensagem = codigo ? ERROS_DO_TETO_CUSTO[codigo] : undefined;
+      return mensagem ? { ok: false, campo: 'tetoCusto', mensagem } : { ok: false };
+    }
   }
 
   async carregarProjetosDoGrupo(aplicacaoId: string): Promise<void> {
