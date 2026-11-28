@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import type { FatiaDoPainel, Gaveta } from '../fatias.tipos';
 import { FatiaGavetaComponent } from './fatia-gaveta.component';
@@ -45,6 +46,7 @@ describe('[P1] FatiaGavetaComponent', () => {
   const painel = () => document.querySelector<HTMLElement>('[data-testid="gaveta"]');
   const links = () => Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-testid="gaveta"] a'));
 
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter([])] }));
   afterEach(() => document.querySelectorAll('.cdk-overlay-container').forEach((o) => (o.innerHTML = '')));
 
   it('é um diálogo com o título da Fatia (código em mono e badge de estado)', async () => {
@@ -53,6 +55,15 @@ describe('[P1] FatiaGavetaComponent', () => {
     expect(painel()!.querySelector('h2')!.textContent).toContain('Extrato em PDF');
     expect(painel()!.textContent).toContain('P1.1');
     expect(painel()!.querySelector('[data-testid="estado-badge"]')!.textContent).toContain('Em execução');
+  });
+
+  it('[X1] "ver na auditoria" só com a Auditoria ligada, filtrando pelo código da Fatia', async () => {
+    await montar();
+    expect(painel()!.querySelector('[data-testid="ver-na-auditoria"]')).toBeNull();
+    fixture.componentRef.setInput('auditoriaLigada', true);
+    fixture.detectChanges();
+    const a = painel()!.querySelector<HTMLAnchorElement>('[data-testid="ver-na-auditoria"]')!;
+    expect(a.getAttribute('href')).toBe('/auditoria?objeto=P1.1');
   });
 
   it('fechada, não desenha nada', async () => {
