@@ -1319,6 +1319,247 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auditoria": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    aplicacaoId?: string;
+                    quem?: string;
+                    categoria?: string;
+                    periodoDias?: number | string;
+                    objeto?: string;
+                    busca?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RegistroAuditoriaListaDto"][];
+                        "application/json": components["schemas"]["RegistroAuditoriaListaDto"][];
+                        "text/json": components["schemas"]["RegistroAuditoriaListaDto"][];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auditoria/categorias": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    aplicacaoId?: string;
+                    quem?: string;
+                    categoria?: string;
+                    periodoDias?: number | string;
+                    objeto?: string;
+                    busca?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["CategoriaContagemDto"][];
+                        "application/json": components["schemas"]["CategoriaContagemDto"][];
+                        "text/json": components["schemas"]["CategoriaContagemDto"][];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auditoria/filtros": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["FiltrosDeAuditoriaDto"];
+                        "application/json": components["schemas"]["FiltrosDeAuditoriaDto"];
+                        "text/json": components["schemas"]["FiltrosDeAuditoriaDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auditoria/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RegistroAuditoriaDetalheDto"];
+                        "application/json": components["schemas"]["RegistroAuditoriaDetalheDto"];
+                        "text/json": components["schemas"]["RegistroAuditoriaDetalheDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RespostaDeErro"];
+                        "application/json": components["schemas"]["RespostaDeErro"];
+                        "text/json": components["schemas"]["RespostaDeErro"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -3187,6 +3428,11 @@ export interface components {
             geradoEm: null | string;
             desatualizado: boolean;
         };
+        AplicacaoDoRegistroDto: {
+            /** Format: uuid */
+            id: string;
+            nome: string;
+        };
         AplicacaoListaDto: {
             /** Format: uuid */
             id?: string;
@@ -3212,6 +3458,11 @@ export interface components {
             /** Format: int64 */
             projetoGitLabId: null | number | string;
             stack: null | string;
+        };
+        CategoriaContagemDto: {
+            categoria: string;
+            /** Format: int32 */
+            total: number | string;
         };
         ContagemDaAnaliseDto: {
             /** Format: int32 */
@@ -3326,6 +3577,10 @@ export interface components {
             review?: null | components["schemas"]["ReviewDaFatiaDto"];
             decisao?: null | string;
         };
+        FiltrosDeAuditoriaDto: {
+            aplicacoes: components["schemas"]["AplicacaoDoRegistroDto"][];
+            pessoas: components["schemas"]["PessoaDoFiltroDto"][];
+        };
         FluxoDaEntregaDto: {
             /** Format: uuid */
             id: string;
@@ -3427,8 +3682,20 @@ export interface components {
             id: string;
             nome: string;
         };
+        MudancaDto: {
+            campo: string;
+            antes: string;
+            depois: string;
+        };
         NomeDto: {
             nome: string;
+        };
+        ObjetoDto: {
+            codigo: string;
+            nome: null | string;
+            entidade: string;
+            /** Format: uuid */
+            entidadeId: string;
         };
         PainelListaDto: {
             itens: components["schemas"]["FatiaDoPainelDto"][];
@@ -3467,6 +3734,10 @@ export interface components {
         };
         PermissoesGlobaisAplicacao: {
             podeCriar: boolean;
+        };
+        PessoaDoFiltroDto: {
+            id: string;
+            nome: string;
         };
         PessoaListaDto: {
             sub?: string;
@@ -3517,6 +3788,37 @@ export interface components {
         PuladaDto: {
             por: null | string;
             motivo: null | string;
+        };
+        QuemDto: {
+            nome: string;
+            origem: string;
+        };
+        RegistroAuditoriaDetalheDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            quando: string;
+            quem: components["schemas"]["QuemDto"];
+            categoria: string;
+            verbo: string;
+            objeto: components["schemas"]["ObjetoDto"];
+            aplicacao?: null | components["schemas"]["AplicacaoDoRegistroDto"];
+            autoaprovacao: boolean;
+            mudancas: components["schemas"]["MudancaDto"][];
+            motivo?: null | string;
+        };
+        RegistroAuditoriaListaDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            quando: string;
+            quem: components["schemas"]["QuemDto"];
+            categoria: string;
+            verbo: string;
+            objeto: components["schemas"]["ObjetoDto"];
+            aplicacao?: null | components["schemas"]["AplicacaoDoRegistroDto"];
+            autoaprovacao: boolean;
+            resumoMudancas: string;
         };
         ReprovarFatiaRequest: {
             comentario: null | string;

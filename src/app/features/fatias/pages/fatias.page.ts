@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, injec
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCircleAlert, lucideListChecks, lucideMonitor, lucideSearch, lucideServer, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { FeatureFlagsService } from '../../../core/config/feature-flags.service';
 import { AtualizarFatiasComponent } from '../components/atualizar-fatias.component';
 import { FatiaGavetaComponent, type AvisoDaGaveta } from '../components/fatia-gaveta.component';
 import { FatiasAvisosComponent } from '../components/fatias-avisos.component';
@@ -182,6 +183,7 @@ const MAXIMO_RECENTES = 5;
       [carregando]="dominio.carregandoGaveta()"
       [falhou]="dominio.falhouGaveta()"
       [acoesLigadas]="dominio.acoesLigadas()"
+      [auditoriaLigada]="auditoriaLigada"
       [aviso]="avisoDaGaveta()"
       [reexecutando]="reexecutando()"
       (reexecutar)="reexecutar($event)"
@@ -210,6 +212,8 @@ const MAXIMO_RECENTES = 5;
 })
 export class FatiasPage implements OnInit {
   protected readonly dominio = inject(FatiasService);
+  /** Só com `Features:X1` ligado a Auditoria existe: a gaveta mostra "ver na auditoria". */
+  protected readonly auditoriaLigada = inject(FeatureFlagsService).isEnabled('X1');
   protected readonly abas = ABAS;
   protected readonly projetos = PROJETOS;
   /** Aplicações escolhidas há pouco, só nesta sessão da página (nada no navegador). */

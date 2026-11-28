@@ -107,7 +107,10 @@ describe('[E1b] EntregaPage', () => {
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: 'e1' })) } },
       ],
     });
-    expect(q(montar(), 'ver-na-auditoria')!.textContent).toContain('ver na auditoria');
+    const fx = montar();
+    expect(q(fx, 'ver-na-auditoria')!.textContent).toContain('ver na auditoria');
+    // [X1] o link filtra pelo objeto (PublicId da Entrega), não por um parâmetro próprio
+    expect(q(fx, 'ver-na-auditoria')!.getAttribute('href')).toBe('/auditoria?objeto=e1');
   });
 
   it('sem botão de ação na página inteira', () => {

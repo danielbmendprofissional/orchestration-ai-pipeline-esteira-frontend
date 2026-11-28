@@ -65,7 +65,7 @@ import { EntregasService } from '../entregas.service';
               <a
                 data-testid="ver-na-auditoria"
                 [routerLink]="['/auditoria']"
-                [queryParams]="{ entrega: e.id }"
+                [queryParams]="{ objeto: e.id }"
                 class="inline-flex items-center gap-1.5 text-2xs text-brand-fg underline underline-offset-4 hover:text-fg"
               >
                 <ng-icon name="lucideHistory" size="14" aria-hidden="true" />ver na auditoria

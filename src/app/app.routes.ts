@@ -59,6 +59,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/entregas/pages/entrega.page').then((m) => m.EntregaPage),
       },
       {
+        // Atrás do flag Features:X1: desligado, a rota nem casa (nem o menu); ligado, qualquer pessoa autenticada abre
+        // (quem não tem Aplicação vê a lista vazia). A gaveta mora na URL: /auditoria/:id.
+        path: 'auditoria',
+        canMatch: [featureGuard],
+        title: 'Auditoria — Esteira',
+        data: { menu: { rotulo: 'Auditoria', icone: 'lucideScrollText' }, feature: 'X1' } satisfies RotaData,
+        children: [
+          { path: '', loadComponent: () => import('./features/auditoria/pages/auditoria.page').then((m) => m.AuditoriaPage) },
+          { path: ':id', loadComponent: () => import('./features/auditoria/pages/auditoria.page').then((m) => m.AuditoriaPage) },
+        ],
+      },
+      {
         path: 'sem-acesso',
         title: 'Sem acesso — Esteira',
         loadComponent: () => import('./layout/pages/sem-acesso.page').then((m) => m.SemAcessoPage),

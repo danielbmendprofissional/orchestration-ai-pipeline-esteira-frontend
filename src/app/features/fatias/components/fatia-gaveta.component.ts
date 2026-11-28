@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideCircleCheck,
@@ -12,6 +13,7 @@ import {
   lucideFileText,
   lucideGitBranch,
   lucideGitPullRequest,
+  lucideHistory,
   lucideListChecks,
   lucideLoaderCircle,
   lucideX,
@@ -39,11 +41,11 @@ const LINK = 'inline-flex items-center gap-1 rounded-sm text-brand-fg underline-
 @Component({
   selector: 'est-fatia-gaveta',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, NgIcon, HlmSheetImports, HlmButtonImports, EstadoBadgeComponent],
+  imports: [NgTemplateOutlet, NgIcon, RouterLink, HlmSheetImports, HlmButtonImports, EstadoBadgeComponent],
   providers: [
     provideIcons({
       lucideCircleCheck, lucideCircleDashed, lucideCircleHelp, lucideCircleSlash, lucideCircleX, lucideClock, lucideExternalLink, lucideFileText,
-      lucideGitBranch, lucideGitPullRequest, lucideListChecks, lucideLoaderCircle, lucideX,
+      lucideGitBranch, lucideGitPullRequest, lucideHistory, lucideListChecks, lucideLoaderCircle, lucideX,
     }),
   ],
   template: `
@@ -85,6 +87,11 @@ const LINK = 'inline-flex items-center gap-1 rounded-sm text-brand-fg underline-
                   <dd class="text-fg">{{ f.progresso }}</dd>
                 }
               </dl>
+              @if (auditoriaLigada()) {
+                <a data-testid="ver-na-auditoria" [routerLink]="['/auditoria']" [queryParams]="{ objeto: f.codigo }" [class]="link + ' mt-3 text-sm'">
+                  <ng-icon name="lucideHistory" size="14" aria-hidden="true" />ver na auditoria
+                </a>
+              }
             }
 
             @if (aviso(); as av) {
@@ -274,6 +281,8 @@ export class FatiaGavetaComponent {
   readonly falhou = input(false);
   /** `Features:P2` ligada: só então a seção Ações do bot aparece. */
   readonly acoesLigadas = input(false);
+  /** `Features:X1` ligada: só então o link "ver na auditoria" aparece. */
+  readonly auditoriaLigada = input(false);
   /** Resultado do último Reexecutar (estado do 202 ou texto do erro de negócio), sempre como texto. */
   readonly aviso = input<AvisoDaGaveta | null>(null);
   readonly reexecutando = input(false);
